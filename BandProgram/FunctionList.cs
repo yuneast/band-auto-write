@@ -904,19 +904,19 @@ namespace BandProgram
 				}
 				
 				this.util.goToUrl("https://auth.band.us", 300);
-				this.util.delayNext("[class='uBtn -icoType -phone']", 200);
+				this.util.delayNext("[class='uButtonRound -h56 -icoType -phone']", 200);
 				if (type.Contains("이메일"))
 				{
-					this.util.delayNext("[class='loginBtnList'] [class='uBtn -icoType -email']", 200);
-					this.util.clickByCss("[class='loginBtnList'] [class='uBtn -icoType -email']", 500, 0);
+					this.util.delayNext("[class='loginBtnList'] [class='uButtonRound -h56 -icoType -email']", 200);
+					this.util.clickByCss("[class='loginBtnList'] [class='uButtonRound -h56 -icoType -email']", 500, 0);
 					this.util.sendKey("[id='input_email']", id, 300);
 					this.util.sendKey("[id='input_password']", pw, 1300);
 					this.util.sendEnter();
 				}
 				else if (type.Contains("전화번호"))
 				{
-					this.util.delayNext("[class='loginBtnList'] [class='uBtn -icoType -phone']", 200);
-					this.util.clickByCss("[class='loginBtnList'] [class='uBtn -icoType -phone']", 500, 0);
+					this.util.delayNext("[class='loginBtnList'] [class='uButtonRound -h56 -icoType -phone']", 200);
+					this.util.clickByCss("[class='loginBtnList'] [class='uButtonRound -h56 -icoType -phone']", 500, 0);
 					this.util.sendKey("[id='input_local_phone_number']", id, 300);
 					this.util.sendEnter();
 					this.util.sendKey("[id='pw']", pw, 300);
@@ -924,8 +924,8 @@ namespace BandProgram
 				}
 				else if (type.Contains("네이버"))
 				{
-					this.util.delayNext("[class*='uBtn -icoType -naver']", 200);
-					this.util.clickByCss("[class*='uBtn -icoType -naver']", 500, 0);
+					this.util.delayNext("[class*='uButtonRound -h56 -icoType -naver']", 200);
+					this.util.clickByCss("[class*='uButtonRound -h56 -icoType -naver']", 500, 0);
 					this.util.delayNext("[id='id']", 200);
 					this.util.sendKey("[id='id']", id, 300);
 					this.util.sendKey("[id='pw']", pw, 300);
