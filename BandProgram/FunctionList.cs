@@ -897,8 +897,8 @@ namespace BandProgram
 					}
 					else
 					{
-						this.util.clickByCss("[class='user _settingRegion']", 500, 0);
-						this.util.clickByCss("[class='_btnLogout']", 500, 0);
+						this.util.clickByCss("[class='uProfile -size30 -border']", 500, 0);
+						this.util.clickByCss("[class='menuModalLink _btnLogout']", 500, 0);
 						this.util.clickByCss("[class='uButton -confirm _btnLogout']", 500, 0);
 					}
 				}
@@ -924,8 +924,8 @@ namespace BandProgram
 				}
 				else if (type.Contains("네이버"))
 				{
-					this.util.delayNext("[class*='uButtonRound -h56 -icoType -naver']", 200);
-					this.util.clickByCss("[class*='uButtonRound -h56 -icoType -naver']", 500, 0);
+					this.util.delayNext("[class*='uButtonRound -h56 -icoType -naver externalLogin']", 200);
+					this.util.clickByCss("[class*='uButtonRound -h56 -icoType -naver externalLogin']", 500, 0);
 					this.util.delayNext("[id='id']", 200);
 					this.util.sendKey("[id='id']", id, 300);
 					this.util.sendKey("[id='pw']", pw, 300);
@@ -943,7 +943,7 @@ namespace BandProgram
 						flag = false;
 						return flag;
 					}
-					else if (this.util.findElements("[class='user _settingRegion']").Count<IWebElement>() <= 0)
+					else if (this.util.findElements("[class='uProfile -size30 -border']").Count<IWebElement>() <= 0)
 					{
 						num++;
 					}
