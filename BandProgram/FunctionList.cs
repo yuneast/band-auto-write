@@ -301,87 +301,113 @@ namespace BandProgram
 			return bandInfo;
 		}
 
-		public List<BandInfo> getBandList(List<BandInfo> preList)
-		{
-			List<BandInfo> bandInfos;
-			try
-			{
-				if (!this.util.isOpenChrome())
-				{
-					this.login();
-				}
-				if (preList != null)
-				{
-					preList = new List<BandInfo>();
-				}
-				List<string> strs = new List<string>();
-				foreach (BandInfo bandInfo in preList)
-				{
-					strs.Add(bandInfo.num);
-				}
+        public List<BandInfo> getBandList(List<BandInfo> preList)
+        {
+            // 1) preList가 null이면 새로 만들고, 아니면 그대로 사용
+            var bandInfos = preList ?? new List<BandInfo>();
 
-				if (Global.Instance.isTest)
-				{
-					this.util.goToUrl("http://127.0.0.1:3000/feed.html", 1000);
-				}
-				else
-				{
-					this.util.goToUrl("https://band.us/feed/", 1000);
-				}
+            try
+            {
+                // 2) 크롬/로그인 보장
+                if (!this.util.isOpenChrome())
+                {
+                    this.login();
+                }
 
+                // 3) 이미 가진 밴드번호는 HashSet으로 중복 방지
+                var existingIds = new HashSet<string>(bandInfos.Select(b => b.num).Where(s => !string.IsNullOrWhiteSpace(s)));
 
+                // 4) 피드 이동
+                if (Global.Instance.isTest)
+                {
+                    this.util.goToUrl("http://127.0.0.1:3000/feed.html", 1000);
+                }
+                else
+                {
+                    this.util.goToUrl("https://band.us/feed/", 1000);
+                }
 
-				int num = 0;
-				while (num < 5 && this.util.findElements("[class='bandLogo']").Count<IWebElement>() == 0)
-				{
-					this.util.delay(3000);
-					if (num != 5)
-					{
-						num++;
-					}
-					else
-					{
-						bandInfos = null;
-						return bandInfos;
-					}
-				}
-				this.util.delay(3000);
-				this.util.clickByCss("[class='myBandMoreView _btnMore']", 1500, 0); // 내 밴드 더보기
-				this.util.ScrollDown(100, 500);
-				List<BandInfo> bandInfos1 = preList;
-				foreach (IWebElement webElement in this.util.findElements("[class='feedMyBandList']"))
-				{
-					string text = "";
-					try
-					{
-						text = this.util.findElement(webElement, "[class='ellipsis']").Text;
-					}
-					catch
-					{
-						continue;
-					}
-					string str = this.util.findElement(webElement, "a").GetAttribute("href").Split(new char[] { '/' }).Last<string>();
-					if (strs.Contains(str))
-					{
-						continue;
-					}
-					BandInfo bandInfo1 = new BandInfo()
-					{
-						name = text,
-						num = str
-					};
-					bandInfos1.Add(bandInfo1);
-				}
-				bandInfos = bandInfos1;
-			}
-			catch
-			{
-				bandInfos = null;
-			}
-			return bandInfos;
-		}
+                // 5) 초기 로고 요소가 보일 때까지 최대 5회 대기
+                var tries = 0;
+                while (tries < 5 && this.util.findElements("[class='bandLogo']").Count == 0)
+                {
+                    this.util.delay(3000);
+                    tries++;
+                }
+                if (tries >= 5)
+                {
+                    return null; // 타임아웃
+                }
 
-		public List<BandInfo> getBandListFromQuery()
+                this.util.delay(3000);
+
+                // 6) '내 밴드 더보기' 클릭 및 약간 스크롤
+                this.util.clickByCss("[class='myBandMoreView _btnMore']", 1500, 0);
+                this.util.ScrollDown(100, 500);
+
+                // 7) 목록 컨테이너들 순회
+                foreach (var webElement in this.util.findElements("[class='feedMyBandList']"))
+                {
+                    // 제목
+                    string name;
+                    try
+                    {
+                        name = this.util.findElement(webElement, "[class='ellipsis']").Text?.Trim();
+                        if (string.IsNullOrEmpty(name))
+                            continue;
+                    }
+                    catch
+                    {
+                        continue;
+                    }
+
+                    // 앵커 및 href
+                    string href;
+                    try
+                    {
+                        var a = this.util.findElement(webElement, "a");
+                        href = a.GetAttribute("href");
+                        if (string.IsNullOrEmpty(href))
+                            continue;
+                    }
+                    catch
+                    {
+                        continue;
+                    }
+
+                    // ★ 정규식으로 /band/{숫자} 캡처 (뒤에 /post, /notice, 쿼리 등 와도 안전)
+                    var id = ExtractBandId(href);
+                    if (string.IsNullOrEmpty(id))
+                        continue;
+
+                    // 이미 담긴 ID는 스킵
+                    if (!existingIds.Add(id))
+                        continue;
+
+                    bandInfos.Add(new BandInfo
+                    {
+                        name = name,
+                        num = id
+                    });
+                }
+
+                return bandInfos;
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        // href에서 밴드 숫자 ID만 안전하게 추출
+        private static string ExtractBandId(string href)
+        {
+            // 예: /band/5580500/post, https://band.us/band/5580500?foo=bar
+            var m = Regex.Match(href ?? string.Empty, @"(?:^|/)band/(\d+)(?:/|$|\?)");
+            return m.Success ? m.Groups[1].Value : null;
+        }
+
+        public List<BandInfo> getBandListFromQuery()
 		{
 			List<BandInfo> bandInfos;
 			try
