@@ -1,0 +1,120 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="BandProgramAvalonia.Views.LoginSecondWindow"
+        x:CompileBindings="False"
+        Title="밴드로그인"
+        Width="310" Height="440"
+        WindowStartupLocation="CenterScreen"
+        CanResize="False">
+
+    <Border Padding="12">
+        <Border BorderBrush="Gray" BorderThickness="1" Padding="8">
+            <StackPanel>
+                <TextBlock Text="밴드 로그인" FontWeight="Bold" Margin="0,0,0,10"/>
+
+                <!-- 아이디 입력 -->
+                <Grid Margin="0,5">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="85"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0" Text="아이디 :" VerticalAlignment="Center" TextAlignment="Right" Margin="0,0,8,0"/>
+                    <TextBox Grid.Column="1" x:Name="txtId" VerticalAlignment="Center"/>
+                </Grid>
+
+                <!-- 비밀번호 입력 -->
+                <Grid Margin="0,5">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="85"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0" Text="비밀번호 :" VerticalAlignment="Center" TextAlignment="Right" Margin="0,0,8,0"/>
+                    <TextBox Grid.Column="1" x:Name="txtPassword" PasswordChar="●" VerticalAlignment="Center"/>
+                </Grid>
+
+                <!-- 로그인 방식 -->
+                <Grid Margin="0,5">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="85"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0" Text="로그인 방식 :" VerticalAlignment="Center" TextAlignment="Right" Margin="0,0,8,0"/>
+                    <ComboBox Grid.Column="1" x:Name="cboLoginType" VerticalAlignment="Center" SelectedIndex="0">
+                        <ComboBoxItem Content="전화번호"/>
+                        <ComboBoxItem Content="이메일"/>
+                        <ComboBoxItem Content="네이버"/>
+                    </ComboBox>
+                </Grid>
+
+                <!-- 추가 버튼 -->
+                <Button x:Name="btnAdd" Content="추가" Margin="0,10" Click="BtnAdd_Click" HorizontalAlignment="Stretch"/>
+
+                <!-- ListView -->
+                <Border Height="172" Width="269" Margin="0,5" BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left">
+                    <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+                        <StackPanel>
+                            <!-- 헤더 -->
+                            <Border Background="#F0F0F0" BorderBrush="Black" BorderThickness="0,0,0,1">
+                                <Grid Height="20">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="82"/>
+                                        <ColumnDefinition Width="1"/>
+                                        <ColumnDefinition Width="86"/>
+                                        <ColumnDefinition Width="1"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="아이디" VerticalAlignment="Center" Margin="2,0" FontSize="12"/>
+                                    <Border Grid.Column="1" Background="Black" Width="1"/>
+                                    <TextBlock Grid.Column="2" Text="비밀번호" VerticalAlignment="Center" Margin="2,0" FontSize="12"/>
+                                    <Border Grid.Column="3" Background="Black" Width="1"/>
+                                    <TextBlock Grid.Column="4" Text="로그인 방식" VerticalAlignment="Center" Margin="2,0" FontSize="12"/>
+                                </Grid>
+                            </Border>
+
+                            <!-- 리스트 -->
+                            <ListBox x:Name="lstAccounts"
+                                     Background="White"
+                                     BorderThickness="0"
+                                     SelectionMode="Single">
+                                <ListBox.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <StackPanel/>
+                                    </ItemsPanelTemplate>
+                                </ListBox.ItemsPanel>
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border BorderBrush="Black" BorderThickness="0,0,0,1" Padding="0">
+                                            <Grid Height="20">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="82"/>
+                                                    <ColumnDefinition Width="1"/>
+                                                    <ColumnDefinition Width="86"/>
+                                                    <ColumnDefinition Width="1"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                </Grid.ColumnDefinitions>
+                                                <TextBlock Grid.Column="0" Text="{Binding Id}" VerticalAlignment="Center" Margin="2,0" FontSize="12" TextTrimming="CharacterEllipsis"/>
+                                                <Border Grid.Column="1" Background="LightGray" Width="1"/>
+                                                <TextBlock Grid.Column="2" Text="{Binding Password}" VerticalAlignment="Center" Margin="2,0" FontSize="12" TextTrimming="CharacterEllipsis"/>
+                                                <Border Grid.Column="3" Background="LightGray" Width="1"/>
+                                                <TextBlock Grid.Column="4" Text="{Binding LoginType}" VerticalAlignment="Center" Margin="2,0" FontSize="12"/>
+                                            </Grid>
+                                        </Border>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                                <ListBox.ContextMenu>
+                                    <ContextMenu>
+                                        <MenuItem Header="선택된 항목 삭제하기" Click="MenuDeleteSelected_Click"/>
+                                        <MenuItem Header="전체 삭제하기" Click="MenuDeleteAll_Click"/>
+                                    </ContextMenu>
+                                </ListBox.ContextMenu>
+                            </ListBox>
+                        </StackPanel>
+                    </ScrollViewer>
+                </Border>
+
+                <!-- 로그인 버튼 -->
+                <Button x:Name="btnLogin" Content="선택한 아이디로 로그인" Margin="0,10,0,0" Click="BtnLogin_Click" HorizontalAlignment="Stretch"/>
+            </StackPanel>
+        </Border>
+    </Border>
+</Window>

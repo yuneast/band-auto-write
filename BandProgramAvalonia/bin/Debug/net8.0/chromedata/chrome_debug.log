@@ -1,0 +1,7 @@
+[176652:148408:0123/002837.890:INFO:components\enterprise\browser\controller\chrome_browser_cloud_management_controller.cc:206] No machine level policy manager exists.
+[176652:148408:0123/002839.082:INFO:CONSOLE:0] "<meta name="apple-mobile-web-app-capable" content="yes"> is deprecated. Please include <meta name="mobile-web-app-capable" content="yes">", source: https://www.band.us/home (0)
+[176652:148408:0123/002841.419:ERROR:components\device_event_log\device_event_log_impl.cc:198] [00:28:41.419] USB: usb_service_win.cc:105 SetupDiGetDeviceProperty({{A45C254E-DF1C-4EFD-8020-67D146A850E0}, 6}) failed: 요소가 없습니다. (0x490)
+[176652:291024:0123/002841.643:ERROR:google_apis\gcm\engine\registration_request.cc:292] Registration response error message: DEPRECATED_ENDPOINT
+[176652:148408:0123/002845.991:INFO:CONSOLE:184] "[DOM] Input elements should have autocomplete attributes (suggested: "new-password"): (More info: https://goo.gl/9p2vKq) %o", source: https://auth.band.us/phone_login/password?socket_token=Q7OBC6fZcTo9CIsLkJy1&login_type= (184)
+[388656:174832:0123/002852.685:WARNING:net\extras\sqlite\sqlite_persistent_store_backend_base.cc:176] Failed to post task from FlushAndNotifyInBackground@net\extras\sqlite\sqlite_persistent_store_backend_base.cc:226 to client_task_runner_.
+[388656:174832:0123/002852.685:WARNING:net\extras\sqlite\sqlite_persistent_store_backend_base.cc:176] Failed to post task from FlushAndNotifyInBackground@net\extras\sqlite\sqlite_persistent_store_backend_base.cc:226 to client_task_runner_.

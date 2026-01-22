@@ -1,0 +1,51 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="BandProgramAvalonia.Views.SelectPostingWindow"
+        Title="게시 번호 선택"
+        Width="400"
+        Height="350"
+        WindowStartupLocation="CenterScreen">
+    <Grid Margin="15">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="100"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <TextBlock Grid.Row="0" Grid.Column="0" Text="밴드명:" VerticalAlignment="Center"/>
+        <TextBox Grid.Row="0" Grid.Column="1" x:Name="txtBandName" IsReadOnly="True" Margin="0,0,0,10"/>
+
+        <TextBlock Grid.Row="1" Grid.Column="0" Text="밴드 번호:" VerticalAlignment="Center"/>
+        <TextBox Grid.Row="1" Grid.Column="1" x:Name="txtBandId" IsReadOnly="True" Margin="0,0,0,10"/>
+
+        <TextBlock Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Text="쉼표로 구분하여 번호 입력 (예: 1, 2, 3)"
+                   Margin="0,10,0,5" FontStyle="Italic" Foreground="Gray"/>
+
+        <TextBlock Grid.Row="3" Grid.Column="0" Text="게시글:" VerticalAlignment="Center"/>
+        <TextBox Grid.Row="3" Grid.Column="1" x:Name="txtPosting" Margin="0,0,0,10"/>
+
+        <TextBlock Grid.Row="4" Grid.Column="0" Text="댓글:" VerticalAlignment="Center"/>
+        <TextBox Grid.Row="4" Grid.Column="1" x:Name="txtComment" Margin="0,0,0,10"/>
+
+        <TextBlock Grid.Row="5" Grid.Column="0" Text="채팅:" VerticalAlignment="Center"/>
+        <TextBox Grid.Row="5" Grid.Column="1" x:Name="txtChatting" Margin="0,0,0,10"/>
+
+        <Button Grid.Row="8" Grid.Column="0" Grid.ColumnSpan="2"
+                Content="적용"
+                x:Name="btnApply"
+                Click="BtnApply_Click"
+                HorizontalAlignment="Stretch"
+                HorizontalContentAlignment="Center"
+                Height="35"/>
+    </Grid>
+</Window>

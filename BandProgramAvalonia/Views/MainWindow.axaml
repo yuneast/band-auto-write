@@ -1,0 +1,525 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:models="using:BandProgramAvalonia.Models"
+        x:Class="BandProgramAvalonia.Views.MainWindow"
+        x:CompileBindings="False"
+        Title="밴드프로그램"
+        Width="1050"
+        Height="720"
+        WindowStartupLocation="CenterScreen">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="310"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- 왼쪽: 메인 탭 컨트롤 -->
+        <TabControl Grid.Column="0" Margin="3,0,0,0">
+            <!-- 밴드 리스트 탭 -->
+            <TabItem Header="밴드 리스트">
+                <Grid Margin="0,3,3,3" Background="White">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="10" Margin="10">
+                        <Button Content="불러오기" x:Name="btnLoadBands" Click="BtnLoadBands_Click" Width="100"/>
+                        <Button Content="전체 선택" x:Name="btnSelectAll" Click="BtnSelectAll_Click" Width="100"/>
+                        <Button Content="선택 삭제" x:Name="btnDeleteSelected" Click="BtnDeleteSelected_Click" Width="100"/>
+                    </StackPanel>
+
+                    <Border Grid.Row="1" BorderBrush="Gray" BorderThickness="1" Background="White" Margin="10,0,10,10">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+
+                            <Border Grid.Row="0" Background="#F0F0F0" BorderBrush="Gray" BorderThickness="0,0,0,1" Padding="5">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="50"/>
+                                        <ColumnDefinition Width="200"/>
+                                        <ColumnDefinition Width="120"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="번호" FontWeight="Bold" Margin="5,0,0,0"/>
+                                    <TextBlock Grid.Column="1" Text="밴드명" FontWeight="Bold" Margin="5,0,0,0"/>
+                                    <TextBlock Grid.Column="2" Text="밴드번호" FontWeight="Bold" Margin="5,0,0,0"/>
+                                    <TextBlock Grid.Column="3" Text="포스팅 원고" FontWeight="Bold" Margin="5,0,0,0"/>
+                                    <TextBlock Grid.Column="4" Text="댓글 원고" FontWeight="Bold" Margin="5,0,0,0"/>
+                                    <TextBlock Grid.Column="5" Text="대화 원고" FontWeight="Bold" Margin="5,0,0,0"/>
+                                </Grid>
+                            </Border>
+
+                            <ListBox Grid.Row="1" x:Name="lstBandList"
+                                     SelectionMode="Multiple"
+                                     Background="Transparent"
+                                     BorderThickness="0">
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border BorderBrush="LightGray" BorderThickness="0,0,0,1" Padding="5">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="50"/>
+                                                    <ColumnDefinition Width="200"/>
+                                                    <ColumnDefinition Width="120"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                </Grid.ColumnDefinitions>
+                                                <TextBlock Grid.Column="0" Text="{Binding Index}" Margin="5,0,0,0" VerticalAlignment="Center"/>
+                                                <TextBlock Grid.Column="1" Text="{Binding Name}" Margin="5,0,0,0" VerticalAlignment="Center"/>
+                                                <TextBlock Grid.Column="2" Text="{Binding Num}" Margin="5,0,0,0" VerticalAlignment="Center"/>
+                                                <TextBlock Grid.Column="3" Text="{Binding PostingListStr}" Margin="5,0,0,0" VerticalAlignment="Center"/>
+                                                <TextBlock Grid.Column="4" Text="{Binding CommentListStr}" Margin="5,0,0,0" VerticalAlignment="Center"/>
+                                                <TextBlock Grid.Column="5" Text="{Binding ChattingListStr}" Margin="5,0,0,0" VerticalAlignment="Center"/>
+                                            </Grid>
+                                        </Border>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+                        </Grid>
+                    </Border>
+
+                    <TextBlock Grid.Row="2" x:Name="lblBandCount" Text="밴드 리스트 (0)" Margin="10,0,0,5" FontSize="14" Height="25" VerticalAlignment="Center"/>
+                </Grid>
+            </TabItem>
+
+            <!-- 포스팅 작성 탭 -->
+            <TabItem Header="포스팅 작성">
+                <Grid Margin="5">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="350"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- 좌측: 게시글 리스트 -->
+                    <Grid Grid.Column="0" Margin="0,0,5,0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <Border Grid.Row="0" BorderBrush="Gray" BorderThickness="1" Background="White">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+
+                                <Border Grid.Row="0" Background="#F0F0F0" BorderBrush="Gray" BorderThickness="0,0,0,1" Padding="5">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="50"/>
+                                            <ColumnDefinition Width="100"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="80"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0" Text="번호" FontWeight="Bold" Margin="5,0,0,0"/>
+                                        <TextBlock Grid.Column="1" Text="제목" FontWeight="Bold" Margin="5,0,0,0"/>
+                                        <TextBlock Grid.Column="2" Text="내용" FontWeight="Bold" Margin="5,0,0,0"/>
+                                        <TextBlock Grid.Column="3" Text="댓글" FontWeight="Bold" Margin="5,0,0,0"/>
+                                    </Grid>
+                                </Border>
+
+                                <ListBox Grid.Row="1" x:Name="lstPostList" Background="Transparent" BorderThickness="0">
+                                    <ListBox.ContextMenu>
+                                        <ContextMenu>
+                                            <MenuItem Header="항목 추가하기" Click="BtnAddPost_Click"/>
+                                            <MenuItem Header="선택된 항목 삭제하기" Click="BtnDeletePost_Click"/>
+                                        </ContextMenu>
+                                    </ListBox.ContextMenu>
+                                </ListBox>
+                            </Grid>
+                        </Border>
+
+                        <TextBlock Grid.Row="1" x:Name="lblPostCount" Text="게시글 리스트 (0)" Margin="0,5,0,0" FontSize="12"/>
+                    </Grid>
+
+                    <!-- 우측: 작업 설정 -->
+                    <Border Grid.Column="1" BorderBrush="Gray" BorderThickness="1" Padding="10">
+                        <ScrollViewer>
+                            <StackPanel Spacing="10">
+                                <!-- 작업 순서 설정 -->
+                                <TextBlock Text="작업 순서 설정" FontWeight="Bold"/>
+                                <ComboBox x:Name="cboPostWorkType" SelectedIndex="0">
+                                    <ComboBoxItem Content="모든 밴드에 직접 지정한 포스트 작성하기"/>
+                                    <ComboBoxItem Content="모든 밴드에 랜덤 포스트 작성하기"/>
+                                    <ComboBoxItem Content="모든 밴드에 순차 포스트 작성하기"/>
+                                </ComboBox>
+
+                                <Separator Height="1" Background="Silver" Margin="0,10"/>
+
+                                <!-- 작업 간격 설정 -->
+                                <TextBlock Text="작업 간격 설정" FontWeight="Bold"/>
+                                <StackPanel Orientation="Horizontal" Spacing="5">
+                                    <TextBlock Text="간격" VerticalAlignment="Center"/>
+                                    <ComboBox x:Name="cboPostInterval" Width="100" SelectedIndex="4">
+                                        <ComboBoxItem Content="1초"/>
+                                        <ComboBoxItem Content="2초"/>
+                                        <ComboBoxItem Content="3초"/>
+                                        <ComboBoxItem Content="4초"/>
+                                        <ComboBoxItem Content="5초"/>
+                                        <ComboBoxItem Content="10초"/>
+                                        <ComboBoxItem Content="15초"/>
+                                        <ComboBoxItem Content="20초"/>
+                                        <ComboBoxItem Content="30초"/>
+                                        <ComboBoxItem Content="1분"/>
+                                        <ComboBoxItem Content="2분"/>
+                                        <ComboBoxItem Content="3분"/>
+                                        <ComboBoxItem Content="5분"/>
+                                        <ComboBoxItem Content="10분"/>
+                                    </ComboBox>
+                                </StackPanel>
+
+                                <CheckBox x:Name="chkPostCopy" Content="내용 복사 붙여넣기"/>
+
+                                <Separator Height="1" Background="Silver" Margin="0,10"/>
+
+                                <!-- 작업 반복 설정 -->
+                                <TextBlock Text="작업 반복 설정" FontWeight="Bold"/>
+                                <StackPanel Orientation="Horizontal" Spacing="5">
+                                    <TextBlock Text="횟수" VerticalAlignment="Center"/>
+                                    <ComboBox x:Name="cboPostRepeatCount" Width="100" SelectedIndex="0">
+                                        <ComboBoxItem Content="무한"/>
+                                        <ComboBoxItem Content="1회"/>
+                                        <ComboBoxItem Content="2회"/>
+                                        <ComboBoxItem Content="3회"/>
+                                        <ComboBoxItem Content="5회"/>
+                                        <ComboBoxItem Content="10회"/>
+                                    </ComboBox>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" Spacing="5">
+                                    <TextBlock Text="간격" VerticalAlignment="Center"/>
+                                    <ComboBox x:Name="cboPostRepeatInterval" Width="100" SelectedIndex="0">
+                                        <ComboBoxItem Content="없음"/>
+                                        <ComboBoxItem Content="1분"/>
+                                        <ComboBoxItem Content="5분"/>
+                                        <ComboBoxItem Content="10분"/>
+                                        <ComboBoxItem Content="30분"/>
+                                        <ComboBoxItem Content="1시간"/>
+                                    </ComboBox>
+                                </StackPanel>
+
+                                <Separator Height="1" Background="Silver" Margin="0,10"/>
+
+                                <!-- 직접 예약 설정 -->
+                                <CheckBox x:Name="chkPostReserved" Content="직접 예약 설정" FontWeight="Bold" FontSize="12"/>
+                                <StackPanel Orientation="Horizontal" Spacing="5" Margin="20,0,0,0">
+                                    <ComboBox x:Name="cboPostReservedHour" Width="60"/>
+                                    <TextBlock Text=":" VerticalAlignment="Center" FontWeight="Bold"/>
+                                    <ComboBox x:Name="cboPostReservedMinute" Width="60"/>
+                                    <TextBlock Text="분에 작업 시작" VerticalAlignment="Center"/>
+                                </StackPanel>
+
+                                <Separator Height="1" Background="Silver" Margin="0,20,0,10"/>
+
+                                <!-- 작업 버튼 -->
+                                <StackPanel Orientation="Horizontal" Spacing="10">
+                                    <Button Content="작업 시작" x:Name="btnStartPost" Click="BtnStartPost_Click" Width="110" Height="50"/>
+                                    <Button Content="일시정지" x:Name="btnPausePost" Click="BtnStopPost_Click" Width="110" Height="50"/>
+                                </StackPanel>
+                                <Button Content="작업 초기화" x:Name="btnResetPost" Width="230" Height="50" IsEnabled="False"/>
+                            </StackPanel>
+                        </ScrollViewer>
+                    </Border>
+                </Grid>
+            </TabItem>
+
+            <!-- 댓글 작성 탭 -->
+            <TabItem Header="댓글 작성">
+                <Grid Margin="5">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="350"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- 좌측: 댓글 리스트 -->
+                    <Grid Grid.Column="0" Margin="0,0,5,0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <Border Grid.Row="0" BorderBrush="Gray" BorderThickness="1" Background="White">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+
+                                <Border Grid.Row="0" Background="#F0F0F0" BorderBrush="Gray" BorderThickness="0,0,0,1" Padding="5">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="50"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="100"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0" Text="번호" FontWeight="Bold" Margin="5,0,0,0"/>
+                                        <TextBlock Grid.Column="1" Text="내용" FontWeight="Bold" Margin="5,0,0,0"/>
+                                        <TextBlock Grid.Column="2" Text="댓글" FontWeight="Bold" Margin="5,0,0,0"/>
+                                    </Grid>
+                                </Border>
+
+                                <ListBox Grid.Row="1" x:Name="lstCommentList" Background="Transparent" BorderThickness="0">
+                                    <ListBox.ContextMenu>
+                                        <ContextMenu>
+                                            <MenuItem Header="항목 추가하기" Click="BtnAddComment_Click"/>
+                                            <MenuItem Header="선택된 항목 삭제하기" Click="BtnDeleteComment_Click"/>
+                                        </ContextMenu>
+                                    </ListBox.ContextMenu>
+                                </ListBox>
+                            </Grid>
+                        </Border>
+
+                        <TextBlock Grid.Row="1" x:Name="lblCommentCount" Text="댓글 리스트 (0)" Margin="0,5,0,0" FontSize="12"/>
+                    </Grid>
+
+                    <!-- 우측: 작업 설정 -->
+                    <Border Grid.Column="1" BorderBrush="Gray" BorderThickness="1" Padding="10">
+                        <ScrollViewer>
+                            <StackPanel Spacing="10">
+                                <TextBlock Text="작업 순서 설정" FontWeight="Bold"/>
+                                <ComboBox x:Name="cboCommentWorkType" SelectedIndex="0">
+                                    <ComboBoxItem Content="모든 밴드의 최신글에 댓글 작성하기"/>
+                                    <ComboBoxItem Content="모든 밴드에 랜덤 댓글 작성하기"/>
+                                    <ComboBoxItem Content="모든 밴드에 순차 댓글 작성하기"/>
+                                </ComboBox>
+
+                                <Separator Height="1" Background="Silver" Margin="0,10"/>
+
+                                <TextBlock Text="작업 간격 설정" FontWeight="Bold"/>
+                                <StackPanel Orientation="Horizontal" Spacing="5">
+                                    <TextBlock Text="간격" VerticalAlignment="Center"/>
+                                    <ComboBox x:Name="cboCommentInterval" Width="100" SelectedIndex="4">
+                                        <ComboBoxItem Content="1초"/>
+                                        <ComboBoxItem Content="2초"/>
+                                        <ComboBoxItem Content="3초"/>
+                                        <ComboBoxItem Content="4초"/>
+                                        <ComboBoxItem Content="5초"/>
+                                        <ComboBoxItem Content="10초"/>
+                                        <ComboBoxItem Content="15초"/>
+                                        <ComboBoxItem Content="20초"/>
+                                        <ComboBoxItem Content="30초"/>
+                                        <ComboBoxItem Content="1분"/>
+                                    </ComboBox>
+                                </StackPanel>
+
+                                <CheckBox x:Name="chkCommentCopy" Content="내용 복사 붙여넣기"/>
+
+                                <Separator Height="1" Background="Silver" Margin="0,10"/>
+
+                                <TextBlock Text="작업 반복 설정" FontWeight="Bold"/>
+                                <StackPanel Orientation="Horizontal" Spacing="5">
+                                    <TextBlock Text="횟수" VerticalAlignment="Center"/>
+                                    <ComboBox x:Name="cboCommentRepeatCount" Width="100" SelectedIndex="0">
+                                        <ComboBoxItem Content="무한"/>
+                                        <ComboBoxItem Content="1회"/>
+                                        <ComboBoxItem Content="2회"/>
+                                        <ComboBoxItem Content="3회"/>
+                                        <ComboBoxItem Content="5회"/>
+                                        <ComboBoxItem Content="10회"/>
+                                    </ComboBox>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" Spacing="5">
+                                    <TextBlock Text="간격" VerticalAlignment="Center"/>
+                                    <ComboBox x:Name="cboCommentRepeatInterval" Width="100" SelectedIndex="0">
+                                        <ComboBoxItem Content="없음"/>
+                                        <ComboBoxItem Content="1분"/>
+                                        <ComboBoxItem Content="5분"/>
+                                        <ComboBoxItem Content="10분"/>
+                                        <ComboBoxItem Content="30분"/>
+                                        <ComboBoxItem Content="1시간"/>
+                                    </ComboBox>
+                                </StackPanel>
+
+                                <Separator Height="1" Background="Silver" Margin="0,10"/>
+
+                                <CheckBox x:Name="chkCommentReserved" Content="직접 예약 설정" FontWeight="Bold" FontSize="12"/>
+                                <StackPanel Orientation="Horizontal" Spacing="5" Margin="20,0,0,0">
+                                    <ComboBox x:Name="cboCommentReservedHour" Width="60"/>
+                                    <TextBlock Text=":" VerticalAlignment="Center" FontWeight="Bold"/>
+                                    <ComboBox x:Name="cboCommentReservedMinute" Width="60"/>
+                                    <TextBlock Text="분에 작업 시작" VerticalAlignment="Center"/>
+                                </StackPanel>
+
+                                <Separator Height="1" Background="Silver" Margin="0,20,0,10"/>
+
+                                <StackPanel Orientation="Horizontal" Spacing="10">
+                                    <Button Content="작업 시작" x:Name="btnStartComment" Click="BtnStartComment_Click" Width="110" Height="50"/>
+                                    <Button Content="일시정지" x:Name="btnPauseComment" Click="BtnStopComment_Click" Width="110" Height="50"/>
+                                </StackPanel>
+                                <Button Content="작업 초기화" x:Name="btnResetComment" Width="230" Height="50" IsEnabled="False"/>
+                            </StackPanel>
+                        </ScrollViewer>
+                    </Border>
+                </Grid>
+            </TabItem>
+
+            <!-- 대화 작성 탭 -->
+            <TabItem Header="대화 작성">
+                <Grid Margin="5">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="350"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- 좌측: 대화 리스트 -->
+                    <Grid Grid.Column="0" Margin="0,0,5,0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <Border Grid.Row="0" BorderBrush="Gray" BorderThickness="1" Background="White">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+
+                                <Border Grid.Row="0" Background="#F0F0F0" BorderBrush="Gray" BorderThickness="0,0,0,1" Padding="5">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="50"/>
+                                            <ColumnDefinition Width="100"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0" Text="번호" FontWeight="Bold" Margin="5,0,0,0"/>
+                                        <TextBlock Grid.Column="1" Text="제목" FontWeight="Bold" Margin="5,0,0,0"/>
+                                        <TextBlock Grid.Column="2" Text="내용" FontWeight="Bold" Margin="5,0,0,0"/>
+                                    </Grid>
+                                </Border>
+
+                                <ListBox Grid.Row="1" x:Name="lstChatList" Background="Transparent" BorderThickness="0">
+                                    <ListBox.ContextMenu>
+                                        <ContextMenu>
+                                            <MenuItem Header="항목 추가하기" Click="BtnAddChat_Click"/>
+                                            <MenuItem Header="선택된 항목 삭제하기" Click="BtnDeleteChat_Click"/>
+                                        </ContextMenu>
+                                    </ListBox.ContextMenu>
+                                </ListBox>
+                            </Grid>
+                        </Border>
+
+                        <TextBlock Grid.Row="1" x:Name="lblChatCount" Text="게시글 리스트 (0)" Margin="0,5,0,0" FontSize="12"/>
+                    </Grid>
+
+                    <!-- 우측: 작업 설정 -->
+                    <Border Grid.Column="1" BorderBrush="Gray" BorderThickness="1" Padding="10">
+                        <ScrollViewer>
+                            <StackPanel Spacing="10">
+                                <TextBlock Text="작업 순서 설정" FontWeight="Bold"/>
+                                <ComboBox x:Name="cboChatWorkType" SelectedIndex="0">
+                                    <ComboBoxItem Content="모든 밴드에 직접 지정한 포스트 작성하기"/>
+                                    <ComboBoxItem Content="모든 밴드에 랜덤 포스트 작성하기"/>
+                                    <ComboBoxItem Content="모든 밴드에 순차 포스트 작성하기"/>
+                                </ComboBox>
+
+                                <Separator Height="1" Background="Silver" Margin="0,10"/>
+
+                                <TextBlock Text="작업 간격 설정" FontWeight="Bold"/>
+                                <StackPanel Orientation="Horizontal" Spacing="5">
+                                    <TextBlock Text="간격" VerticalAlignment="Center"/>
+                                    <ComboBox x:Name="cboChatInterval" Width="100" SelectedIndex="4">
+                                        <ComboBoxItem Content="1초"/>
+                                        <ComboBoxItem Content="2초"/>
+                                        <ComboBoxItem Content="3초"/>
+                                        <ComboBoxItem Content="4초"/>
+                                        <ComboBoxItem Content="5초"/>
+                                        <ComboBoxItem Content="10초"/>
+                                        <ComboBoxItem Content="15초"/>
+                                        <ComboBoxItem Content="20초"/>
+                                        <ComboBoxItem Content="30초"/>
+                                        <ComboBoxItem Content="1분"/>
+                                    </ComboBox>
+                                </StackPanel>
+
+                                <CheckBox x:Name="chkChatCopy" Content="내용 복사 붙여넣기"/>
+
+                                <Separator Height="1" Background="Silver" Margin="0,10"/>
+
+                                <TextBlock Text="작업 반복 설정" FontWeight="Bold"/>
+                                <StackPanel Orientation="Horizontal" Spacing="5">
+                                    <TextBlock Text="횟수" VerticalAlignment="Center"/>
+                                    <ComboBox x:Name="cboChatRepeatCount" Width="100" SelectedIndex="0">
+                                        <ComboBoxItem Content="무한"/>
+                                        <ComboBoxItem Content="1회"/>
+                                        <ComboBoxItem Content="2회"/>
+                                        <ComboBoxItem Content="3회"/>
+                                        <ComboBoxItem Content="5회"/>
+                                        <ComboBoxItem Content="10회"/>
+                                    </ComboBox>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" Spacing="5">
+                                    <TextBlock Text="간격" VerticalAlignment="Center"/>
+                                    <ComboBox x:Name="cboChatRepeatInterval" Width="100" SelectedIndex="0">
+                                        <ComboBoxItem Content="없음"/>
+                                        <ComboBoxItem Content="1분"/>
+                                        <ComboBoxItem Content="5분"/>
+                                        <ComboBoxItem Content="10분"/>
+                                        <ComboBoxItem Content="30분"/>
+                                        <ComboBoxItem Content="1시간"/>
+                                    </ComboBox>
+                                </StackPanel>
+
+                                <Separator Height="1" Background="Silver" Margin="0,10"/>
+
+                                <CheckBox x:Name="chkChatReserved" Content="직접 예약 설정" FontWeight="Bold" FontSize="12"/>
+                                <StackPanel Orientation="Horizontal" Spacing="5" Margin="20,0,0,0">
+                                    <ComboBox x:Name="cboChatReservedHour" Width="60"/>
+                                    <TextBlock Text=":" VerticalAlignment="Center" FontWeight="Bold"/>
+                                    <ComboBox x:Name="cboChatReservedMinute" Width="60"/>
+                                    <TextBlock Text="분에 작업 시작" VerticalAlignment="Center"/>
+                                </StackPanel>
+
+                                <Separator Height="1" Background="Silver" Margin="0,20,0,10"/>
+
+                                <StackPanel Orientation="Horizontal" Spacing="10">
+                                    <Button Content="작업 시작" x:Name="btnStartChat" Click="BtnStartChat_Click" Width="110" Height="50"/>
+                                    <Button Content="일시정지" x:Name="btnPauseChat" Click="BtnStopChat_Click" Width="110" Height="50"/>
+                                </StackPanel>
+                                <Button Content="작업 초기화" x:Name="btnResetChat" Width="230" Height="50" IsEnabled="False"/>
+                            </StackPanel>
+                        </ScrollViewer>
+                    </Border>
+                </Grid>
+            </TabItem>
+
+            <!-- 밴드 가입 탭 -->
+            <TabItem Header="밴드 가입">
+                <Grid Margin="5">
+                    <TextBlock Text="밴드 가입 기능 (미구현)" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="16"/>
+                </Grid>
+            </TabItem>
+        </TabControl>
+
+        <!-- 우측: 로그 -->
+        <Grid Grid.Column="1" Margin="3,0">
+            <TabControl>
+                <TabItem Header="로그">
+                    <Grid Margin="5">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <Border Grid.Row="0" BorderBrush="Gray" BorderThickness="1" Background="White">
+                            <ListBox x:Name="lstLog" Background="Transparent" BorderThickness="0"/>
+                        </Border>
+
+                        <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,5,0,0">
+                            <TextBlock x:Name="lblUserInfo" Text="님 안녕하세요." VerticalAlignment="Center"/>
+                            <Button Content="로그아웃" x:Name="btnLogout" Margin="10,0,0,0"/>
+                        </StackPanel>
+                    </Grid>
+                </TabItem>
+            </TabControl>
+        </Grid>
+    </Grid>
+</Window>

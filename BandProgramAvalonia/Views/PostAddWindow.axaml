@@ -1,0 +1,65 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="BandProgramAvalonia.Views.PostAddWindow"
+        Title="게시글 추가/수정"
+        Width="700"
+        Height="600"
+        WindowStartupLocation="CenterScreen">
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="150"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="100"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Post Content -->
+        <Border Grid.Row="0" BorderBrush="Gray" BorderThickness="1" Padding="5">
+            <DockPanel>
+                <TextBlock DockPanel.Dock="Top" Text="게시글 내용" FontWeight="Bold" Margin="0,0,0,5"/>
+                <TextBox x:Name="txtPostContent" AcceptsReturn="True" TextWrapping="Wrap"/>
+            </DockPanel>
+        </Border>
+
+        <!-- Post Images -->
+        <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,5">
+            <RadioButton x:Name="radioPostImage" Content="단일 이미지" IsChecked="True" Margin="0,0,20,0"/>
+            <RadioButton x:Name="radioPostFolder" Content="폴더"/>
+            <Button Content="이미지 추가" x:Name="btnAddPostImage" Click="BtnAddPostImage_Click" Margin="20,0,0,0"/>
+            <Button Content="선택 삭제" x:Name="btnRemovePostImage" Click="BtnRemovePostImage_Click" Margin="10,0,0,0"/>
+        </StackPanel>
+
+        <ListBox Grid.Row="2" x:Name="lstPostImages"/>
+
+        <!-- Comment Section -->
+        <CheckBox Grid.Row="3" x:Name="chkAddComment" Content="게시글과 함께 댓글 추가" Margin="0,10,0,5"/>
+
+        <Border Grid.Row="4" BorderBrush="Gray" BorderThickness="1" Padding="5" x:Name="grpComment" IsEnabled="{Binding IsChecked, ElementName=chkAddComment}">
+            <DockPanel>
+                <TextBlock DockPanel.Dock="Top" Text="댓글 내용" FontWeight="Bold" Margin="0,0,0,5"/>
+                <TextBox x:Name="txtCommentContent" AcceptsReturn="True" TextWrapping="Wrap"/>
+            </DockPanel>
+        </Border>
+
+        <!-- Comment Images -->
+        <StackPanel Grid.Row="5" Orientation="Horizontal" Margin="0,5" IsEnabled="{Binding IsChecked, ElementName=chkAddComment}">
+            <RadioButton x:Name="radioCommentImage" Content="단일 이미지" IsChecked="True" Margin="0,0,20,0"/>
+            <RadioButton x:Name="radioCommentFolder" Content="폴더"/>
+            <Button Content="이미지 추가" x:Name="btnAddCommentImage" Click="BtnAddCommentImage_Click" Margin="20,0,0,0"/>
+            <Button Content="선택 삭제" x:Name="btnRemoveCommentImage" Click="BtnRemoveCommentImage_Click" Margin="10,0,0,0"/>
+        </StackPanel>
+
+        <ListBox Grid.Row="6" x:Name="lstCommentImages" IsEnabled="{Binding IsChecked, ElementName=chkAddComment}"/>
+
+        <!-- Save Button -->
+        <Button Grid.Row="7" Content="저장" x:Name="btnSave" Click="BtnSave_Click"
+                HorizontalAlignment="Stretch"
+                HorizontalContentAlignment="Center"
+                Height="40"
+                Margin="0,10,0,0"/>
+    </Grid>
+</Window>

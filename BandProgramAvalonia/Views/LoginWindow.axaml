@@ -1,0 +1,50 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="BandProgramAvalonia.Views.LoginWindow"
+        Title="밴드 프로그램 - 로그인"
+        Width="350"
+        Height="200"
+        WindowStartupLocation="CenterScreen">
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="80"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <TextBlock Grid.Row="0" Grid.Column="0"
+                   Text="아이디"
+                   VerticalAlignment="Center"
+                   Margin="0,0,10,10"/>
+        <TextBox Grid.Row="0" Grid.Column="1"
+                 x:Name="txtId"
+                 Margin="0,0,0,10"/>
+
+        <TextBlock Grid.Row="1" Grid.Column="0"
+                   Text="비밀번호"
+                   VerticalAlignment="Center"
+                   Margin="0,0,10,10"/>
+        <TextBox Grid.Row="1" Grid.Column="1"
+                 x:Name="txtPassword"
+                 PasswordChar="*"
+                 Margin="0,0,0,10"/>
+
+        <Button Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2"
+                Content="로그인"
+                x:Name="btnLogin"
+                HorizontalAlignment="Stretch"
+                HorizontalContentAlignment="Center"
+                Click="BtnLogin_Click"/>
+
+        <TextBlock Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2"
+                   x:Name="lblStatus"
+                   HorizontalAlignment="Center"
+                   VerticalAlignment="Center"
+                   Foreground="Red"/>
+    </Grid>
+</Window>
