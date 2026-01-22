@@ -491,3 +491,156 @@ https://band.us/band/5587345 - 작업 불가능한 밴드입니다.
 목록 불러오기 완료
 불러오는 중
 목록 불러오기 완료
+프로그램 실행
+프로그램 실행
+프로그램 실행
+불러오는 중
+목록 불러오기 완료
+btnRemove_Click
+D:/band-auto-write/BandProgram/bin/Debug/AutoDoc/Posting/post_2
+mcfly17 -> 포스팅 작업 시작
+https://band.us/band/71620312 - 작업 불가능한 밴드입니다.
+https://band.us/band/5616388 - 작업 불가능한 밴드입니다.
+https://band.us/band/72980824 - 작업 불가능한 밴드입니다.
+https://band.us/band/5580500 - 작업 불가능한 밴드입니다.
+예외상황이 발생하여 다음 작업으로 넘어갑니다.
+포스팅 작업 완료
+작업 중지
+프로그램 실행
+mcfly17 -> 포스팅 작업 시작
+http://band.us/band/63542683 - 포스팅 성공
+http://band.us/band/55031853 - 포스팅 성공
+http://band.us/band/64164842 - 포스팅 성공
+http://band.us/band/70917956 - 포스팅 성공
+http://band.us/band/77627642 - 포스팅 성공
+http://band.us/band/71922260 - 포스팅 성공
+http://band.us/band/70958994 - 포스팅 성공
+http://band.us/band/69051112 - 포스팅 성공
+http://band.us/band/79744966 - 포스팅 성공
+http://band.us/band/77688827 - 포스팅 성공
+http://band.us/band/67040306 - 포스팅 성공
+http://band.us/band/69142115 - 포스팅 성공
+http://band.us/band/57149125 - 포스팅 성공
+http://band.us/band/67040288 - 포스팅 성공
+http://band.us/band/69958192 - 포스팅 성공
+http://band.us/band/83960308 - 포스팅 성공
+http://band.us/band/59983179 - 포스팅 성공
+http://band.us/band/75898373 - 포스팅 성공
+http://band.us/band/67040356 - 포스팅 성공
+https://band.us/band/85574343 - 작업 불가능한 밴드입니다.
+http://band.us/band/57273662 - 포스팅 성공
+http://band.us/band/82619712 - 포스팅 성공
+http://band.us/band/57790978 - 포스팅 성공
+http://band.us/band/85648731 - 포스팅 성공
+http://band.us/band/57485996 - 포스팅 성공
+http://band.us/band/83202739 - 포스팅 성공
+https://band.us/band/82298608 - 작업 불가능한 밴드입니다.
+http://band.us/band/82057367 - 포스팅 성공
+http://band.us/band/73580393 - 포스팅 성공
+http://band.us/band/87630780 - 포스팅 성공
+https://band.us/band/82298817 - 작업 불가능한 밴드입니다.
+http://band.us/band/76348934 - 포스팅 성공
+http://band.us/band/82057581 - 포스팅 성공
+http://band.us/band/69903293 - 포스팅 성공
+http://band.us/band/63542683 - 포스팅 성공
+http://band.us/band/55031853 - 포스팅 성공
+http://band.us/band/64164842 - 포스팅 성공
+http://band.us/band/70917956 - 포스팅 성공
+http://band.us/band/77627642 - 포스팅 성공
+http://band.us/band/71922260 - 포스팅 성공
+http://band.us/band/70958994 - 포스팅 성공
+http://band.us/band/69051112 - 포스팅 성공
+http://band.us/band/79744966 - 포스팅 성공
+http://band.us/band/77688827 - 포스팅 성공
+http://band.us/band/67040306 - 포스팅 성공
+http://band.us/band/69142115 - 포스팅 성공
+http://band.us/band/57149125 - 포스팅 성공
+http://band.us/band/67040288 - 포스팅 성공
+http://band.us/band/69958192 - 포스팅 성공
+http://band.us/band/83960308 - 포스팅 성공
+http://band.us/band/59983179 - 포스팅 성공
+http://band.us/band/75898373 - 포스팅 성공
+http://band.us/band/67040356 - 포스팅 성공
+https://band.us/band/85574343 - 작업 불가능한 밴드입니다.
+http://band.us/band/57273662 - 포스팅 성공
+http://band.us/band/82619712 - 포스팅 성공
+http://band.us/band/57790978 - 포스팅 성공
+http://band.us/band/85648731 - 포스팅 성공
+http://band.us/band/57485996 - 포스팅 성공
+http://band.us/band/83202739 - 포스팅 성공
+https://band.us/band/82298608 - 작업 불가능한 밴드입니다.
+http://band.us/band/82057367 - 포스팅 성공
+http://band.us/band/73580393 - 포스팅 성공
+http://band.us/band/87630780 - 포스팅 성공
+https://band.us/band/82298817 - 작업 불가능한 밴드입니다.
+http://band.us/band/76348934 - 포스팅 성공
+http://band.us/band/82057581 - 포스팅 성공
+http://band.us/band/69903293 - 포스팅 성공
+http://band.us/band/63542683 - 포스팅 성공
+http://band.us/band/55031853 - 포스팅 성공
+http://band.us/band/64164842 - 포스팅 성공
+http://band.us/band/70917956 - 포스팅 성공
+http://band.us/band/77627642 - 포스팅 성공
+http://band.us/band/71922260 - 포스팅 성공
+http://band.us/band/70958994 - 포스팅 성공
+http://band.us/band/69051112 - 포스팅 성공
+http://band.us/band/79744966 - 포스팅 성공
+http://band.us/band/77688827 - 포스팅 성공
+http://band.us/band/67040306 - 포스팅 성공
+http://band.us/band/69142115 - 포스팅 성공
+http://band.us/band/57149125 - 포스팅 성공
+http://band.us/band/67040288 - 포스팅 성공
+http://band.us/band/69958192 - 포스팅 성공
+http://band.us/band/83960308 - 포스팅 성공
+http://band.us/band/59983179 - 포스팅 성공
+http://band.us/band/75898373 - 포스팅 성공
+http://band.us/band/67040356 - 포스팅 성공
+https://band.us/band/85574343 - 작업 불가능한 밴드입니다.
+http://band.us/band/57273662 - 포스팅 성공
+http://band.us/band/82619712 - 포스팅 성공
+http://band.us/band/57790978 - 포스팅 성공
+http://band.us/band/85648731 - 포스팅 성공
+http://band.us/band/57485996 - 포스팅 성공
+http://band.us/band/83202739 - 포스팅 성공
+https://band.us/band/82298608 - 작업 불가능한 밴드입니다.
+http://band.us/band/82057367 - 포스팅 성공
+http://band.us/band/73580393 - 포스팅 성공
+http://band.us/band/87630780 - 포스팅 성공
+https://band.us/band/82298817 - 작업 불가능한 밴드입니다.
+http://band.us/band/76348934 - 포스팅 성공
+http://band.us/band/82057581 - 포스팅 성공
+http://band.us/band/69903293 - 포스팅 성공
+http://band.us/band/63542683 - 포스팅 성공
+http://band.us/band/55031853 - 포스팅 성공
+http://band.us/band/64164842 - 포스팅 성공
+http://band.us/band/70917956 - 포스팅 성공
+http://band.us/band/77627642 - 포스팅 성공
+http://band.us/band/71922260 - 포스팅 성공
+http://band.us/band/70958994 - 포스팅 성공
+http://band.us/band/69051112 - 포스팅 성공
+http://band.us/band/79744966 - 포스팅 성공
+http://band.us/band/77688827 - 포스팅 성공
+http://band.us/band/67040306 - 포스팅 성공
+http://band.us/band/69142115 - 포스팅 성공
+http://band.us/band/57149125 - 포스팅 성공
+http://band.us/band/67040288 - 포스팅 성공
+http://band.us/band/69958192 - 포스팅 성공
+http://band.us/band/83960308 - 포스팅 성공
+http://band.us/band/59983179 - 포스팅 성공
+http://band.us/band/75898373 - 포스팅 성공
+http://band.us/band/67040356 - 포스팅 성공
+https://band.us/band/85574343 - 작업 불가능한 밴드입니다.
+http://band.us/band/57273662 - 포스팅 성공
+http://band.us/band/82619712 - 포스팅 성공
+http://band.us/band/57790978 - 포스팅 성공
+http://band.us/band/85648731 - 포스팅 성공
+http://band.us/band/57485996 - 포스팅 성공
+http://band.us/band/83202739 - 포스팅 성공
+https://band.us/band/82298608 - 작업 불가능한 밴드입니다.
+http://band.us/band/82057367 - 포스팅 성공
+http://band.us/band/73580393 - 포스팅 성공
+http://band.us/band/87630780 - 포스팅 성공
+https://band.us/band/82298817 - 작업 불가능한 밴드입니다.
+http://band.us/band/76348934 - 포스팅 성공
+http://band.us/band/82057581 - 포스팅 성공
+http://band.us/band/69903293 - 포스팅 성공
