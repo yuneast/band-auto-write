@@ -1,9 +1,3 @@
-2026/01/19-15:10:03.280 47360 Reusing MANIFEST D:\band-auto-write\BandProgram\bin\Debug\chromedata\Default\Local Storage\leveldb/MANIFEST-000001
-2026/01/19-15:10:03.286 47360 Recovering log #3
-2026/01/19-15:10:03.291 47360 Reusing old log D:\band-auto-write\BandProgram\bin\Debug\chromedata\Default\Local Storage\leveldb/000003.log 
-2026/01/19-23:28:15.449 48a24 Level-0 table #5: started
-2026/01/19-23:28:15.459 48a24 Level-0 table #5: 9949 bytes OK
-2026/01/19-23:28:15.463 48a24 Delete type=0 #3
-2026/01/20-15:41:48.144 48a24 Level-0 table #7: started
-2026/01/20-15:41:48.154 48a24 Level-0 table #7: 8880 bytes OK
-2026/01/20-15:41:48.157 48a24 Delete type=0 #4
+2026/03/21-03:43:23.257 2398 Reusing MANIFEST C:\Users\윤동준\Documents\GitHub\band-auto-write\BandProgram\bin\Debug\chromedata\Default\Local Storage\leveldb/MANIFEST-000001
+2026/03/21-03:43:23.266 2398 Recovering log #3
+2026/03/21-03:43:23.268 2398 Reusing old log C:\Users\윤동준\Documents\GitHub\band-auto-write\BandProgram\bin\Debug\chromedata\Default\Local Storage\leveldb/000003.log 

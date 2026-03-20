@@ -1,118 +1,22 @@
-[301796:301572:0119/151003.119:INFO:components\enterprise\browser\controller\chrome_browser_cloud_management_controller.cc:206] No machine level policy manager exists.
-[301796:281524:0119/151003.630:WARNING:components\leveldb_proto\internal\leveldb_database.cc:125] Unable to open D:\band-auto-write\BandProgram\bin\Debug\chromedata\Default\shared_proto_db\metadata: IO error: D:\band-auto-write\BandProgram\bin\Debug\chromedata\Default\shared_proto_db\metadata/MANIFEST-000001: Unable to create sequential file (ChromeMethodBFE: 7::NewSequentialFile::1)
-[301796:281524:0119/151003.646:WARNING:components\leveldb_proto\internal\leveldb_database.cc:125] Unable to open D:\band-auto-write\BandProgram\bin\Debug\chromedata\Default\shared_proto_db\metadata: IO error: D:\band-auto-write\BandProgram\bin\Debug\chromedata\Default\shared_proto_db\metadata/MANIFEST-000001: Unable to create sequential file (ChromeMethodBFE: 7::NewSequentialFile::1)
-[301796:281524:0119/151003.661:WARNING:components\leveldb_proto\internal\leveldb_database.cc:125] Unable to open D:\band-auto-write\BandProgram\bin\Debug\chromedata\Default\shared_proto_db\metadata: IO error: D:\band-auto-write\BandProgram\bin\Debug\chromedata\Default\shared_proto_db\metadata/MANIFEST-000001: Unable to create sequential file (ChromeMethodBFE: 7::NewSequentialFile::1)
-[301796:281524:0119/151003.669:WARNING:components\leveldb_proto\internal\leveldb_database.cc:125] Unable to open D:\band-auto-write\BandProgram\bin\Debug\chromedata\Default\shared_proto_db\metadata: IO error: D:\band-auto-write\BandProgram\bin\Debug\chromedata\Default\shared_proto_db\metadata/MANIFEST-000001: Unable to create sequential file (ChromeMethodBFE: 7::NewSequentialFile::1)
-[301796:297712:0119/151003.705:WARNING:components\value_store\value_store_frontend.cc:47] Reading ahfgeienlihckogmohjhadlkjgocpleb.alarms from  failed: IO error: .../MANIFEST-000001: Unable to create sequential file (ChromeMethodBFE: 7::NewSequentialFile::1)
-[301796:297712:0119/151003.711:WARNING:components\value_store\value_store_frontend.cc:47] Reading mhjfbmdgcfjbbpaeojofohoefgiehjai.alarms from  failed: IO error: .../MANIFEST-000001: Unable to create sequential file (ChromeMethodBFE: 7::NewSequentialFile::1)
-[301796:301572:0119/151004.552:INFO:CONSOLE:0] "<meta name="apple-mobile-web-app-capable" content="yes"> is deprecated. Please include <meta name="mobile-web-app-capable" content="yes">", source: https://www.band.us/home (0)
-[301796:301572:0119/151007.062:INFO:CONSOLE:184] "[DOM] Input elements should have autocomplete attributes (suggested: "new-password"): (More info: https://goo.gl/9p2vKq) %o", source: https://auth.band.us/phone_login/password?socket_token=rUwrD5goETxpwpUJ8IC0&login_type= (184)
-[301796:301572:0119/151010.842:ERROR:components\device_event_log\device_event_log_impl.cc:198] [15:10:10.843] USB: usb_service_win.cc:105 SetupDiGetDeviceProperty({{A45C254E-DF1C-4EFD-8020-67D146A850E0}, 6}) failed: 요소가 없습니다. (0x490)
-[301796:298572:0119/151011.150:ERROR:google_apis\gcm\engine\registration_request.cc:292] Registration response error message: DEPRECATED_ENDPOINT
-[301796:248688:0119/151011.250:WARNING:components\leveldb_proto\internal\leveldb_database.cc:125] Unable to open D:\band-auto-write\BandProgram\bin\Debug\chromedata\Default\AutofillStrikeDatabase: IO error: D:\band-auto-write\BandProgram\bin\Debug\chromedata\Default\AutofillStrikeDatabase/MANIFEST-000001: Unable to create sequential file (ChromeMethodBFE: 7::NewSequentialFile::1)
-[301796:248688:0119/151011.259:WARNING:components\leveldb_proto\internal\leveldb_database.cc:125] Unable to open D:\band-auto-write\BandProgram\bin\Debug\chromedata\Default\BudgetDatabase: IO error: D:\band-auto-write\BandProgram\bin\Debug\chromedata\Default\BudgetDatabase/MANIFEST-000001: Unable to create sequential file (ChromeMethodBFE: 7::NewSequentialFile::1)
-[301796:248688:0119/151011.266:WARNING:components\leveldb_proto\internal\leveldb_database.cc:125] Unable to open D:\band-auto-write\BandProgram\bin\Debug\chromedata\Default\Feature Engagement Tracker\AvailabilityDB: IO error: D:\band-auto-write\BandProgram\bin\Debug\chromedata\Default\Feature Engagement Tracker\AvailabilityDB/MANIFEST-000001: Unable to create sequential file (ChromeMethodBFE: 7::NewSequentialFile::1)
-[301796:248688:0119/151011.273:WARNING:components\leveldb_proto\internal\leveldb_database.cc:125] Unable to open D:\band-auto-write\BandProgram\bin\Debug\chromedata\Default\Feature Engagement Tracker\EventDB: IO error: D:\band-auto-write\BandProgram\bin\Debug\chromedata\Default\Feature Engagement Tracker\EventDB/MANIFEST-000001: Unable to create sequential file (ChromeMethodBFE: 7::NewSequentialFile::1)
-[301796:299224:0119/151011.347:WARNING:components\leveldb_proto\internal\leveldb_database.cc:125] Unable to open D:\band-auto-write\BandProgram\bin\Debug\chromedata\Default\AutofillStrikeDatabase: IO error: D:\band-auto-write\BandProgram\bin\Debug\chromedata\Default\AutofillStrikeDatabase/MANIFEST-000001: Unable to create sequential file (ChromeMethodBFE: 7::NewSequentialFile::1)
-[301796:248688:0119/151011.353:WARNING:components\leveldb_proto\internal\leveldb_database.cc:125] Unable to open D:\band-auto-write\BandProgram\bin\Debug\chromedata\Default\AutofillStrikeDatabase: IO error: D:\band-auto-write\BandProgram\bin\Debug\chromedata\Default\AutofillStrikeDatabase/MANIFEST-000001: Unable to create sequential file (ChromeMethodBFE: 7::NewSequentialFile::1)
-[301796:248688:0119/151011.360:WARNING:components\leveldb_proto\internal\leveldb_database.cc:125] Unable to open D:\band-auto-write\BandProgram\bin\Debug\chromedata\Default\AutofillStrikeDatabase: IO error: D:\band-auto-write\BandProgram\bin\Debug\chromedata\Default\AutofillStrikeDatabase/MANIFEST-000001: Unable to create sequential file (ChromeMethodBFE: 7::NewSequentialFile::1)
-[301796:298572:0119/151040.926:ERROR:google_apis\gcm\engine\registration_request.cc:292] Registration response error message: DEPRECATED_ENDPOINT
-[300104:287104:0119/151046.223:ERROR:ui\latency\latency_info.cc:106] CompositorFrameSinkSupport::MaybeSubmitCompositorFrame, LatencyInfo vector size 183 is too big.
-[300104:287104:0119/151123.206:ERROR:ui\latency\latency_info.cc:106] CompositorFrameSinkSupport::MaybeSubmitCompositorFrame, LatencyInfo vector size 183 is too big.
-[301796:298572:0119/151134.338:ERROR:google_apis\gcm\engine\registration_request.cc:292] Registration response error message: DEPRECATED_ENDPOINT
-[301796:301572:0119/151140.449:INFO:CONSOLE:2] "Uncaught TypeError: t.getChildCount is not a function", source: https://ssl.pstatic.net/cmstatic/webclient/band-web/script/20260113193308/boot.bundle.js?_=20260113193308 (2)
-[300104:287104:0119/151218.640:ERROR:ui\latency\latency_info.cc:106] CompositorFrameSinkSupport::MaybeSubmitCompositorFrame, LatencyInfo vector size 184 is too big.
-[300104:287104:0119/151237.039:ERROR:ui\latency\latency_info.cc:106] CompositorFrameSinkSupport::MaybeSubmitCompositorFrame, LatencyInfo vector size 184 is too big.
-[300104:287104:0119/151255.349:ERROR:ui\latency\latency_info.cc:106] CompositorFrameSinkSupport::MaybeSubmitCompositorFrame, LatencyInfo vector size 184 is too big.
-[301796:298572:0119/151256.493:ERROR:google_apis\gcm\engine\registration_request.cc:292] Registration response error message: DEPRECATED_ENDPOINT
-[300104:287104:0119/151314.047:ERROR:ui\latency\latency_info.cc:106] CompositorFrameSinkSupport::MaybeSubmitCompositorFrame, LatencyInfo vector size 184 is too big.
-[300104:287104:0119/151351.110:ERROR:ui\latency\latency_info.cc:106] CompositorFrameSinkSupport::MaybeSubmitCompositorFrame, LatencyInfo vector size 184 is too big.
-[300104:287104:0119/151409.504:ERROR:ui\latency\latency_info.cc:106] CompositorFrameSinkSupport::MaybeSubmitCompositorFrame, LatencyInfo vector size 184 is too big.
-[300104:287104:0119/151427.986:ERROR:ui\latency\latency_info.cc:106] CompositorFrameSinkSupport::MaybeSubmitCompositorFrame, LatencyInfo vector size 184 is too big.
-[300104:287104:0119/151446.352:ERROR:ui\latency\latency_info.cc:106] CompositorFrameSinkSupport::MaybeSubmitCompositorFrame, LatencyInfo vector size 184 is too big.
-[300104:287104:0119/151505.644:ERROR:ui\latency\latency_info.cc:106] CompositorFrameSinkSupport::MaybeSubmitCompositorFrame, LatencyInfo vector size 184 is too big.
-[300104:287104:0119/151524.101:ERROR:ui\latency\latency_info.cc:106] CompositorFrameSinkSupport::MaybeSubmitCompositorFrame, LatencyInfo vector size 184 is too big.
-[300104:287104:0119/151542.646:ERROR:ui\latency\latency_info.cc:106] CompositorFrameSinkSupport::MaybeSubmitCompositorFrame, LatencyInfo vector size 180 is too big.
-[300104:287104:0119/151628.180:ERROR:ui\latency\latency_info.cc:106] CompositorFrameSinkSupport::MaybeSubmitCompositorFrame, LatencyInfo vector size 184 is too big.
-[301796:298572:0119/151637.017:ERROR:google_apis\gcm\engine\registration_request.cc:292] Registration response error message: QUOTA_EXCEEDED
-[300104:287104:0119/151705.155:ERROR:ui\latency\latency_info.cc:106] CompositorFrameSinkSupport::MaybeSubmitCompositorFrame, LatencyInfo vector size 184 is too big.
-[300104:287104:0119/151723.690:ERROR:ui\latency\latency_info.cc:106] CompositorFrameSinkSupport::MaybeSubmitCompositorFrame, LatencyInfo vector size 184 is too big.
-[300104:287104:0119/151827.169:ERROR:ui\latency\latency_info.cc:106] CompositorFrameSinkSupport::MaybeSubmitCompositorFrame, LatencyInfo vector size 184 is too big.
-[300104:287104:0119/151845.526:ERROR:ui\latency\latency_info.cc:106] CompositorFrameSinkSupport::MaybeSubmitCompositorFrame, LatencyInfo vector size 184 is too big.
-[300104:287104:0119/151904.038:ERROR:ui\latency\latency_info.cc:106] CompositorFrameSinkSupport::MaybeSubmitCompositorFrame, LatencyInfo vector size 184 is too big.
-[300104:287104:0119/151949.086:ERROR:ui\latency\latency_info.cc:106] CompositorFrameSinkSupport::MaybeSubmitCompositorFrame, LatencyInfo vector size 184 is too big.
-[300104:287104:0119/152007.471:ERROR:ui\latency\latency_info.cc:106] CompositorFrameSinkSupport::MaybeSubmitCompositorFrame, LatencyInfo vector size 184 is too big.
-[300104:287104:0119/232020.957:ERROR:ui\latency\latency_info.cc:106] CompositorFrameSinkSupport::MaybeSubmitCompositorFrame, LatencyInfo vector size 174 is too big.
-[300104:287104:0119/232039.299:ERROR:ui\latency\latency_info.cc:106] CompositorFrameSinkSupport::MaybeSubmitCompositorFrame, LatencyInfo vector size 184 is too big.
-[300104:287104:0119/232057.597:ERROR:ui\latency\latency_info.cc:106] CompositorFrameSinkSupport::MaybeSubmitCompositorFrame, LatencyInfo vector size 184 is too big.
-[300104:287104:0119/232115.908:ERROR:ui\latency\latency_info.cc:106] CompositorFrameSinkSupport::MaybeSubmitCompositorFrame, LatencyInfo vector size 184 is too big.
-[300104:287104:0119/232134.423:ERROR:ui\latency\latency_info.cc:106] CompositorFrameSinkSupport::MaybeSubmitCompositorFrame, LatencyInfo vector size 184 is too big.
-[300104:287104:0119/232152.725:ERROR:ui\latency\latency_info.cc:106] CompositorFrameSinkSupport::MaybeSubmitCompositorFrame, LatencyInfo vector size 184 is too big.
-[300104:287104:0119/232229.499:ERROR:ui\latency\latency_info.cc:106] CompositorFrameSinkSupport::MaybeSubmitCompositorFrame, LatencyInfo vector size 177 is too big.
-[300104:287104:0119/232247.804:ERROR:ui\latency\latency_info.cc:106] CompositorFrameSinkSupport::MaybeSubmitCompositorFrame, LatencyInfo vector size 184 is too big.
-[300104:287104:0119/232306.257:ERROR:ui\latency\latency_info.cc:106] CompositorFrameSinkSupport::MaybeSubmitCompositorFrame, LatencyInfo vector size 184 is too big.
-[300104:287104:0119/232324.596:ERROR:ui\latency\latency_info.cc:106] CompositorFrameSinkSupport::MaybeSubmitCompositorFrame, LatencyInfo vector size 184 is too big.
-[300104:287104:0119/232342.964:ERROR:ui\latency\latency_info.cc:106] CompositorFrameSinkSupport::MaybeSubmitCompositorFrame, LatencyInfo vector size 184 is too big.
-[300104:287104:0119/232401.270:ERROR:ui\latency\latency_info.cc:106] CompositorFrameSinkSupport::MaybeSubmitCompositorFrame, LatencyInfo vector size 184 is too big.
-[300104:287104:0119/232419.787:ERROR:ui\latency\latency_info.cc:106] CompositorFrameSinkSupport::MaybeSubmitCompositorFrame, LatencyInfo vector size 184 is too big.
-[300104:287104:0119/232438.127:ERROR:ui\latency\latency_info.cc:106] CompositorFrameSinkSupport::MaybeSubmitCompositorFrame, LatencyInfo vector size 184 is too big.
-[300104:287104:0119/232456.475:ERROR:ui\latency\latency_info.cc:106] CompositorFrameSinkSupport::MaybeSubmitCompositorFrame, LatencyInfo vector size 184 is too big.
-[300104:287104:0119/232551.861:ERROR:ui\latency\latency_info.cc:106] CompositorFrameSinkSupport::MaybeSubmitCompositorFrame, LatencyInfo vector size 184 is too big.
-[300104:287104:0119/232655.158:ERROR:ui\latency\latency_info.cc:106] CompositorFrameSinkSupport::MaybeSubmitCompositorFrame, LatencyInfo vector size 184 is too big.
-[300104:287104:0119/232713.483:ERROR:ui\latency\latency_info.cc:106] CompositorFrameSinkSupport::MaybeSubmitCompositorFrame, LatencyInfo vector size 184 is too big.
-[300104:287104:0119/232731.762:ERROR:ui\latency\latency_info.cc:106] CompositorFrameSinkSupport::MaybeSubmitCompositorFrame, LatencyInfo vector size 180 is too big.
-[300104:287104:0119/232750.073:ERROR:ui\latency\latency_info.cc:106] CompositorFrameSinkSupport::MaybeSubmitCompositorFrame, LatencyInfo vector size 184 is too big.
-[300104:287104:0119/232816.705:ERROR:ui\latency\latency_info.cc:106] CompositorFrameSinkSupport::MaybeSubmitCompositorFrame, LatencyInfo vector size 184 is too big.
-[300104:287104:0119/232835.160:ERROR:ui\latency\latency_info.cc:106] CompositorFrameSinkSupport::MaybeSubmitCompositorFrame, LatencyInfo vector size 184 is too big.
-[300104:287104:0119/232853.718:ERROR:ui\latency\latency_info.cc:106] CompositorFrameSinkSupport::MaybeSubmitCompositorFrame, LatencyInfo vector size 184 is too big.
-[300104:287104:0119/232920.393:ERROR:ui\latency\latency_info.cc:106] CompositorFrameSinkSupport::MaybeSubmitCompositorFrame, LatencyInfo vector size 184 is too big.
-[300104:287104:0119/232957.657:ERROR:ui\latency\latency_info.cc:106] CompositorFrameSinkSupport::MaybeSubmitCompositorFrame, LatencyInfo vector size 184 is too big.
-[300104:287104:0120/073011.425:ERROR:ui\latency\latency_info.cc:106] CompositorFrameSinkSupport::MaybeSubmitCompositorFrame, LatencyInfo vector size 184 is too big.
-[300104:287104:0120/073029.865:ERROR:ui\latency\latency_info.cc:106] CompositorFrameSinkSupport::MaybeSubmitCompositorFrame, LatencyInfo vector size 163 is too big.
-[300104:287104:0120/073048.218:ERROR:ui\latency\latency_info.cc:106] CompositorFrameSinkSupport::MaybeSubmitCompositorFrame, LatencyInfo vector size 150 is too big.
-[300104:287104:0120/073106.579:ERROR:ui\latency\latency_info.cc:106] CompositorFrameSinkSupport::MaybeSubmitCompositorFrame, LatencyInfo vector size 180 is too big.
-[300104:287104:0120/073143.261:ERROR:ui\latency\latency_info.cc:106] CompositorFrameSinkSupport::MaybeSubmitCompositorFrame, LatencyInfo vector size 182 is too big.
-[300104:287104:0120/073201.688:ERROR:ui\latency\latency_info.cc:106] CompositorFrameSinkSupport::MaybeSubmitCompositorFrame, LatencyInfo vector size 148 is too big.
-[300104:287104:0120/073220.055:ERROR:ui\latency\latency_info.cc:106] CompositorFrameSinkSupport::MaybeSubmitCompositorFrame, LatencyInfo vector size 174 is too big.
-[300104:287104:0120/073238.387:ERROR:ui\latency\latency_info.cc:106] CompositorFrameSinkSupport::MaybeSubmitCompositorFrame, LatencyInfo vector size 145 is too big.
-[300104:287104:0120/073256.834:ERROR:ui\latency\latency_info.cc:106] CompositorFrameSinkSupport::MaybeSubmitCompositorFrame, LatencyInfo vector size 165 is too big.
-[300104:287104:0120/073315.297:ERROR:ui\latency\latency_info.cc:106] CompositorFrameSinkSupport::MaybeSubmitCompositorFrame, LatencyInfo vector size 142 is too big.
-[300104:287104:0120/073333.628:ERROR:ui\latency\latency_info.cc:106] CompositorFrameSinkSupport::MaybeSubmitCompositorFrame, LatencyInfo vector size 184 is too big.
-[300104:287104:0120/073410.457:ERROR:ui\latency\latency_info.cc:106] CompositorFrameSinkSupport::MaybeSubmitCompositorFrame, LatencyInfo vector size 148 is too big.
-[300104:287104:0120/073428.779:ERROR:ui\latency\latency_info.cc:106] CompositorFrameSinkSupport::MaybeSubmitCompositorFrame, LatencyInfo vector size 152 is too big.
-[300104:287104:0120/073447.147:ERROR:ui\latency\latency_info.cc:106] CompositorFrameSinkSupport::MaybeSubmitCompositorFrame, LatencyInfo vector size 176 is too big.
-[300104:287104:0120/073505.462:ERROR:ui\latency\latency_info.cc:106] CompositorFrameSinkSupport::MaybeSubmitCompositorFrame, LatencyInfo vector size 184 is too big.
-[300104:287104:0120/073542.145:ERROR:ui\latency\latency_info.cc:106] CompositorFrameSinkSupport::MaybeSubmitCompositorFrame, LatencyInfo vector size 146 is too big.
-[300104:287104:0120/073608.807:ERROR:ui\latency\latency_info.cc:106] CompositorFrameSinkSupport::MaybeSubmitCompositorFrame, LatencyInfo vector size 176 is too big.
-[300104:287104:0120/073627.371:ERROR:ui\latency\latency_info.cc:106] CompositorFrameSinkSupport::MaybeSubmitCompositorFrame, LatencyInfo vector size 183 is too big.
-[300104:287104:0120/073645.856:ERROR:ui\latency\latency_info.cc:106] CompositorFrameSinkSupport::MaybeSubmitCompositorFrame, LatencyInfo vector size 176 is too big.
-[300104:287104:0120/073704.183:ERROR:ui\latency\latency_info.cc:106] CompositorFrameSinkSupport::MaybeSubmitCompositorFrame, LatencyInfo vector size 173 is too big.
-[300104:287104:0120/073722.681:ERROR:ui\latency\latency_info.cc:106] CompositorFrameSinkSupport::MaybeSubmitCompositorFrame, LatencyInfo vector size 151 is too big.
-[300104:287104:0120/073741.172:ERROR:ui\latency\latency_info.cc:106] CompositorFrameSinkSupport::MaybeSubmitCompositorFrame, LatencyInfo vector size 148 is too big.
-[300104:287104:0120/073807.840:ERROR:ui\latency\latency_info.cc:106] CompositorFrameSinkSupport::MaybeSubmitCompositorFrame, LatencyInfo vector size 138 is too big.
-[300104:287104:0120/073826.173:ERROR:ui\latency\latency_info.cc:106] CompositorFrameSinkSupport::MaybeSubmitCompositorFrame, LatencyInfo vector size 159 is too big.
-[300104:287104:0120/073844.546:ERROR:ui\latency\latency_info.cc:106] CompositorFrameSinkSupport::MaybeSubmitCompositorFrame, LatencyInfo vector size 175 is too big.
-[300104:287104:0120/073929.805:ERROR:ui\latency\latency_info.cc:106] CompositorFrameSinkSupport::MaybeSubmitCompositorFrame, LatencyInfo vector size 184 is too big.
-[300104:287104:0120/073948.164:ERROR:ui\latency\latency_info.cc:106] CompositorFrameSinkSupport::MaybeSubmitCompositorFrame, LatencyInfo vector size 184 is too big.
-[300104:287104:0120/153958.740:ERROR:ui\latency\latency_info.cc:106] CompositorFrameSinkSupport::MaybeSubmitCompositorFrame, LatencyInfo vector size 184 is too big.
-[300104:287104:0120/154017.319:ERROR:ui\latency\latency_info.cc:106] CompositorFrameSinkSupport::MaybeSubmitCompositorFrame, LatencyInfo vector size 184 is too big.
-[300104:287104:0120/154054.199:ERROR:ui\latency\latency_info.cc:106] CompositorFrameSinkSupport::MaybeSubmitCompositorFrame, LatencyInfo vector size 184 is too big.
-[300104:287104:0120/154112.766:ERROR:ui\latency\latency_info.cc:106] CompositorFrameSinkSupport::MaybeSubmitCompositorFrame, LatencyInfo vector size 184 is too big.
-[300104:287104:0120/154131.079:ERROR:ui\latency\latency_info.cc:106] CompositorFrameSinkSupport::MaybeSubmitCompositorFrame, LatencyInfo vector size 184 is too big.
-[300104:287104:0120/154149.393:ERROR:ui\latency\latency_info.cc:106] CompositorFrameSinkSupport::MaybeSubmitCompositorFrame, LatencyInfo vector size 170 is too big.
-[300104:287104:0120/154207.803:ERROR:ui\latency\latency_info.cc:106] CompositorFrameSinkSupport::MaybeSubmitCompositorFrame, LatencyInfo vector size 177 is too big.
-[300104:287104:0120/154226.105:ERROR:ui\latency\latency_info.cc:106] CompositorFrameSinkSupport::MaybeSubmitCompositorFrame, LatencyInfo vector size 184 is too big.
-[300104:287104:0120/154244.394:ERROR:ui\latency\latency_info.cc:106] CompositorFrameSinkSupport::MaybeSubmitCompositorFrame, LatencyInfo vector size 184 is too big.
-[300104:287104:0120/154302.834:ERROR:ui\latency\latency_info.cc:106] CompositorFrameSinkSupport::MaybeSubmitCompositorFrame, LatencyInfo vector size 184 is too big.
-[300104:287104:0120/154321.159:ERROR:ui\latency\latency_info.cc:106] CompositorFrameSinkSupport::MaybeSubmitCompositorFrame, LatencyInfo vector size 183 is too big.
-[300104:287104:0120/154339.457:ERROR:ui\latency\latency_info.cc:106] CompositorFrameSinkSupport::MaybeSubmitCompositorFrame, LatencyInfo vector size 182 is too big.
-[300104:287104:0120/154357.757:ERROR:ui\latency\latency_info.cc:106] CompositorFrameSinkSupport::MaybeSubmitCompositorFrame, LatencyInfo vector size 184 is too big.
-[300104:287104:0120/154416.167:ERROR:ui\latency\latency_info.cc:106] CompositorFrameSinkSupport::MaybeSubmitCompositorFrame, LatencyInfo vector size 184 is too big.
-[300104:287104:0120/154452.887:ERROR:ui\latency\latency_info.cc:106] CompositorFrameSinkSupport::MaybeSubmitCompositorFrame, LatencyInfo vector size 174 is too big.
-[300104:287104:0120/154529.467:ERROR:ui\latency\latency_info.cc:106] CompositorFrameSinkSupport::MaybeSubmitCompositorFrame, LatencyInfo vector size 184 is too big.
-[300104:287104:0120/154614.514:ERROR:ui\latency\latency_info.cc:106] CompositorFrameSinkSupport::MaybeSubmitCompositorFrame, LatencyInfo vector size 184 is too big.
-[300104:287104:0120/154651.765:ERROR:ui\latency\latency_info.cc:106] CompositorFrameSinkSupport::MaybeSubmitCompositorFrame, LatencyInfo vector size 184 is too big.
-[300104:287104:0120/154813.691:ERROR:ui\latency\latency_info.cc:106] CompositorFrameSinkSupport::MaybeSubmitCompositorFrame, LatencyInfo vector size 169 is too big.
-[300104:287104:0120/154832.147:ERROR:ui\latency\latency_info.cc:106] CompositorFrameSinkSupport::MaybeSubmitCompositorFrame, LatencyInfo vector size 184 is too big.
-[300104:287104:0120/154917.156:ERROR:ui\latency\latency_info.cc:106] CompositorFrameSinkSupport::MaybeSubmitCompositorFrame, LatencyInfo vector size 184 is too big.
-[300104:287104:0120/154935.475:ERROR:ui\latency\latency_info.cc:106] CompositorFrameSinkSupport::MaybeSubmitCompositorFrame, LatencyInfo vector size 184 is too big.
+[9916:11996:0321/034323.055:INFO:components\enterprise\browser\controller\chrome_browser_cloud_management_controller.cc:225] No machine level policy manager exists.
+[9916:8404:0321/034323.124:ERROR:net\disk_cache\simple\simple_backend_impl.cc:82] Failed to create directory: Cache\Default\Code Cache\js
+[6456:10012:0321/034323.210:ERROR:ui\gl\direct_composition_support.cc:243] GetGpuDriverOverlayInfo: Failed to retrieve video device
+[6456:10012:0321/034323.215:WARNING:ui\gl\direct_composition_support.cc:1190] QueryInterface to IDCompositionDevice4 failed: 해당 인터페이스를 지원하지 않습니다. (0x80004002)
+[9916:4124:0321/034323.127:ERROR:net\disk_cache\simple\simple_backend_impl.cc:82] Failed to create directory: Cache\Default\Code Cache\wasm
+[9916:8404:0321/034323.196:ERROR:net\disk_cache\simple\simple_backend_impl.cc:82] Failed to create directory: Cache\Default\Code Cache\js
+[9916:4124:0321/034323.215:ERROR:net\disk_cache\simple\simple_backend_impl.cc:82] Failed to create directory: Cache\Default\Code Cache\wasm
+[9916:4124:0321/034323.241:ERROR:net\disk_cache\simple\simple_backend_impl.cc:750] Simple Cache Backend: wrong file structure on disk: 1 path: Cache\Default\Code Cache\wasm
+[9916:8404:0321/034323.241:ERROR:net\disk_cache\simple\simple_backend_impl.cc:750] Simple Cache Backend: wrong file structure on disk: 1 path: Cache\Default\Code Cache\js
+[9916:9932:0321/034323.241:ERROR:net\disk_cache\cache_util_win.cc:25] Unable to move the cache: 지정된 경로를 찾을 수 없습니다. (0x3)
+[9916:8204:0321/034323.249:ERROR:net\disk_cache\disk_cache.cc:284] Unable to create cache
+[9916:10068:0321/034323.249:ERROR:net\disk_cache\cache_util_win.cc:25] Unable to move the cache: 지정된 경로를 찾을 수 없습니다. (0x3)
+[9916:8204:0321/034323.249:ERROR:net\disk_cache\disk_cache.cc:284] Unable to create cache
+[9916:9932:0321/034323.266:WARNING:components\leveldb_proto\internal\leveldb_database.cc:124] Unable to open C:\Users\윤동준\Documents\GitHub\band-auto-write\BandProgram\bin\Debug\chromedata\Default\shared_proto_db\metadata: IO error: C:\Users\윤동준\Documents\GitHub\band-auto-write\BandProgram\bin\Debug\chromedata\Default\shared_proto_db\metadata/MANIFEST-000001: Unable to create sequential file (ChromeMethodBFE: 7::NewSequentialFile::1)
+[9916:9932:0321/034323.272:WARNING:components\leveldb_proto\internal\leveldb_database.cc:124] Unable to open C:\Users\윤동준\Documents\GitHub\band-auto-write\BandProgram\bin\Debug\chromedata\Default\shared_proto_db\metadata: IO error: C:\Users\윤동준\Documents\GitHub\band-auto-write\BandProgram\bin\Debug\chromedata\Default\shared_proto_db\metadata/MANIFEST-000001: Unable to create sequential file (ChromeMethodBFE: 7::NewSequentialFile::1)
+[9916:9932:0321/034323.272:WARNING:components\leveldb_proto\internal\leveldb_database.cc:124] Unable to open C:\Users\윤동준\Documents\GitHub\band-auto-write\BandProgram\bin\Debug\chromedata\Default\shared_proto_db\metadata: IO error: C:\Users\윤동준\Documents\GitHub\band-auto-write\BandProgram\bin\Debug\chromedata\Default\shared_proto_db\metadata/MANIFEST-000001: Unable to create sequential file (ChromeMethodBFE: 7::NewSequentialFile::1)
+[9916:9932:0321/034323.274:WARNING:components\leveldb_proto\internal\leveldb_database.cc:124] Unable to open C:\Users\윤동준\Documents\GitHub\band-auto-write\BandProgram\bin\Debug\chromedata\Default\shared_proto_db\metadata: IO error: C:\Users\윤동준\Documents\GitHub\band-auto-write\BandProgram\bin\Debug\chromedata\Default\shared_proto_db\metadata/MANIFEST-000001: Unable to create sequential file (ChromeMethodBFE: 7::NewSequentialFile::1)
+[9916:9344:0321/034323.325:WARNING:components\value_store\value_store_frontend.cc:47] Reading ahfgeienlihckogmohjhadlkjgocpleb.alarms from  failed: IO error: .../MANIFEST-000001: Unable to create sequential file (ChromeMethodBFE: 7::NewSequentialFile::1)
+[9916:9344:0321/034323.326:WARNING:components\value_store\value_store_frontend.cc:47] Reading mhjfbmdgcfjbbpaeojofohoefgiehjai.alarms from  failed: IO error: .../MANIFEST-000001: Unable to create sequential file (ChromeMethodBFE: 7::NewSequentialFile::1)
+[9916:9344:0321/034323.375:WARNING:chrome\browser\media\router\discovery\discovery_network_list_win.cc:228] Failed to open WLAN handle: 서비스가 시작되지 않았습니다. (0x426)
+[8620:11532:0321/034323.374:ERROR:net\disk_cache\cache_util_win.cc:25] Unable to move the cache: 지정된 경로를 찾을 수 없습니다. (0x3)
+[8620:9312:0321/034323.420:ERROR:net\disk_cache\disk_cache.cc:284] Unable to create cache

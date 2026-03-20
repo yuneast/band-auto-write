@@ -1,3 +1,2 @@
-2026/01/19-15:10:10.959 3cb70 Reusing MANIFEST D:\band-auto-write\BandProgram\bin\Debug\chromedata\Default\GCM Store/MANIFEST-000001
-2026/01/19-15:10:10.960 3cb70 Recovering log #3
-2026/01/19-15:10:10.960 3cb70 Reusing old log D:\band-auto-write\BandProgram\bin\Debug\chromedata\Default\GCM Store/000003.log 
+2026/03/21-03:40:29.509 1388 Creating DB C:\Users\윤동준\Documents\GitHub\band-auto-write\BandProgram\bin\Debug\chromedata\Default\GCM Store since it was missing.
+2026/03/21-03:40:29.526 1388 Reusing MANIFEST C:\Users\윤동준\Documents\GitHub\band-auto-write\BandProgram\bin\Debug\chromedata\Default\GCM Store/MANIFEST-000001

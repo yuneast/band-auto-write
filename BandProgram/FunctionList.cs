@@ -1949,10 +1949,10 @@ namespace BandProgram
 												printLogLeft("포스팅 내용작성 중입니다.");
 
 												//새로운 소식을 남겨보세요.. 클릭
-												if (this.util.clickByCSS_New("[class='cPostWriteEventWrapper _btnOpenWriteLayer']", 1000, 0))
+												if (this.util.clickByCSS_New("[class='cPostWriteEventWrapper _btnOpenWriteLayer']", 1500, 0))
 												{
 													//에디터 클릭
-													this.util.clickByCss("[class='contentEditor _richEditor skin8 cke_editable cke_editable_inline cke_contents_ltr']", 500, 0);
+													this.util.clickByCss("[class='contentEditor _richEditor skin8 cke_editable cke_editable_inline cke_contents_ltr']", 1000, 0);
 													if (!this.post_pasteCheck)
 													{
 														this.util.sendKeyNoDelay("[contenteditable='true']", postingContent, 0);
@@ -2195,9 +2195,9 @@ namespace BandProgram
 										else if (this.util.findElementWithRec("[class='uButton -sizeL -confirm _btnJoinBand']", 3) == null)
 										{
 											printLogLeft("포스팅 내용작성 중입니다.");
-											if (this.util.clickByCSS_New("[class='cPostWriteEventWrapper _btnOpenWriteLayer']", 1000, 0))
+											if (this.util.clickByCSS_New("[class='cPostWriteEventWrapper _btnOpenWriteLayer']", 1500, 0))
 											{
-												this.util.clickByCss("[class='contentEditor _richEditor skin8 cke_editable cke_editable_inline cke_contents_ltr']", 500, 0);
+												this.util.clickByCss("[class='contentEditor _richEditor skin8 cke_editable cke_editable_inline cke_contents_ltr']", 1000, 0);
 												if (!this.post_pasteCheck)
 												{
 													this.util.sendKeyNoDelay("[contenteditable='true']", postingContent, 0);
