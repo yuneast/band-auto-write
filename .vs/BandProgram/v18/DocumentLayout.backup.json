@@ -1,13 +1,13 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "C:\\Users\\\uC724\uB3D9\uC900\\Documents\\GitHub\\band-auto-write\\",
+  "WorkspaceRootPath": "C:\\Users\\mcfly\\Documents\\GitHub\\band-auto-write\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{2D7B8395-05AB-4FBB-9E5A-095E660A69B9}|BandProgram\\BandProgram.csproj|c:\\users\\\uC724\uB3D9\uC900\\documents\\github\\band-auto-write\\bandprogram\\functionlist.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{2D7B8395-05AB-4FBB-9E5A-095E660A69B9}|BandProgram\\BandProgram.csproj|c:\\users\\mcfly\\documents\\github\\band-auto-write\\bandprogram\\functionlist.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{2D7B8395-05AB-4FBB-9E5A-095E660A69B9}|BandProgram\\BandProgram.csproj|solutionrelative:bandprogram\\functionlist.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{2D7B8395-05AB-4FBB-9E5A-095E660A69B9}|BandProgram\\BandProgram.csproj|c:\\users\\\uC724\uB3D9\uC900\\documents\\github\\band-auto-write\\bandprogram\\appconfiguration.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{2D7B8395-05AB-4FBB-9E5A-095E660A69B9}|BandProgram\\BandProgram.csproj|C:\\Users\\mcfly\\Documents\\GitHub\\band-auto-write\\bandprogram\\appconfiguration.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{2D7B8395-05AB-4FBB-9E5A-095E660A69B9}|BandProgram\\BandProgram.csproj|solutionrelative:bandprogram\\appconfiguration.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
@@ -18,17 +18,21 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 0,
+          "SelectedChildIndex": 1,
           "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{cce594b6-0c39-4442-ba28-10c64ac7e89f}"
+            },
             {
               "$type": "Document",
               "DocumentIndex": 0,
               "Title": "FunctionList.cs",
-              "DocumentMoniker": "C:\\Users\\\uC724\uB3D9\uC900\\Documents\\GitHub\\band-auto-write\\BandProgram\\FunctionList.cs",
+              "DocumentMoniker": "C:\\Users\\mcfly\\Documents\\GitHub\\band-auto-write\\BandProgram\\FunctionList.cs",
               "RelativeDocumentMoniker": "BandProgram\\FunctionList.cs",
-              "ToolTip": "C:\\Users\\\uC724\uB3D9\uC900\\Documents\\GitHub\\band-auto-write\\BandProgram\\FunctionList.cs",
+              "ToolTip": "C:\\Users\\mcfly\\Documents\\GitHub\\band-auto-write\\BandProgram\\FunctionList.cs",
               "RelativeToolTip": "BandProgram\\FunctionList.cs",
-              "ViewState": "AgIAAI0HAAAAAAAAAAAAAKAHAAANAAAAAAAAAA==",
+              "ViewState": "AgIAAKwDAAAAAAAAAAAqwLcDAAAFAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-03-20T18:42:23.22Z",
               "EditorCaption": ""
@@ -37,14 +41,13 @@
               "$type": "Document",
               "DocumentIndex": 1,
               "Title": "AppConfiguration.cs",
-              "DocumentMoniker": "C:\\Users\\\uC724\uB3D9\uC900\\Documents\\GitHub\\band-auto-write\\BandProgram\\AppConfiguration.cs",
+              "DocumentMoniker": "C:\\Users\\mcfly\\Documents\\GitHub\\band-auto-write\\BandProgram\\AppConfiguration.cs",
               "RelativeDocumentMoniker": "BandProgram\\AppConfiguration.cs",
-              "ToolTip": "C:\\Users\\\uC724\uB3D9\uC900\\Documents\\GitHub\\band-auto-write\\BandProgram\\AppConfiguration.cs",
+              "ToolTip": "C:\\Users\\mcfly\\Documents\\GitHub\\band-auto-write\\BandProgram\\AppConfiguration.cs",
               "RelativeToolTip": "BandProgram\\AppConfiguration.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAABoAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-20T18:42:03.611Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-03-20T18:42:03.611Z"
             }
           ]
         }
