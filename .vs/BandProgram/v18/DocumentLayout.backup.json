@@ -18,12 +18,8 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 1,
+          "SelectedChildIndex": 0,
           "Children": [
-            {
-              "$type": "Bookmark",
-              "Name": "ST:0:0:{cce594b6-0c39-4442-ba28-10c64ac7e89f}"
-            },
             {
               "$type": "Document",
               "DocumentIndex": 0,
@@ -32,7 +28,7 @@
               "RelativeDocumentMoniker": "BandProgram\\FunctionList.cs",
               "ToolTip": "C:\\Users\\mcfly\\Documents\\GitHub\\band-auto-write\\BandProgram\\FunctionList.cs",
               "RelativeToolTip": "BandProgram\\FunctionList.cs",
-              "ViewState": "AgIAAKwDAAAAAAAAAAAqwLcDAAAFAAAAAAAAAA==",
+              "ViewState": "AgIAAIgDAAAAAAAAAAAqwKEDAAAHAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-03-20T18:42:23.22Z",
               "EditorCaption": ""

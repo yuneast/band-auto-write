@@ -909,25 +909,25 @@ namespace BandProgram
 					return true;
 				}
 
-				this.util.goToUrl("https://band.us", 300);
-				while (this.util.findElement("[class='user _settingRegion']") == null && this.util.findElement("[data-viewname='DIntroHeaderView']") == null)
-				{
-					this.util.delay(500);
-				}
-				if (this.util.findElement("[class='user _settingRegion']") != null)
-				{
-					if (!logout)
-					{
-						flag = true;
-						return flag;
-					}
-					else
-					{
-						this.util.clickByCss("[class='uProfile -size30 -border']", 500, 0);
-						this.util.clickByCss("[class='menuModalLink _btnLogout']", 500, 0);
-						this.util.clickByCss("[class='uButton -confirm _btnLogout']", 500, 0);
-					}
-				}
+				//this.util.goToUrl("https://band.us", 300);
+				//while (this.util.findElement("[class='user _settingRegion']") == null && this.util.findElement("[data-viewname='DIntroHeaderView']") == null)
+				//{
+				//	this.util.delay(500);
+				//}
+				//if (this.util.findElement("[class='user _settingRegion']") != null)
+				//{
+				//	if (!logout)
+				//	{
+				//		flag = true;
+				//		return flag;
+				//	}
+				//	else
+				//	{
+				//		this.util.clickByCss("[class='uProfile -size30 -border']", 500, 0);
+				//		this.util.clickByCss("[class='menuModalLink _btnLogout']", 500, 0);
+				//		this.util.clickByCss("[class='uButton -confirm _btnLogout']", 500, 0);
+				//	}
+				//}
 				
 				this.util.goToUrl("https://auth.band.us", 300);
 				this.util.delayNext("[class='buttonRound -cellPhone']", 200);
