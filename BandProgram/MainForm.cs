@@ -621,11 +621,10 @@ namespace BandProgram
         }
         private void button15_Click(object sender, EventArgs e)
         {
-            if (this.thSignup == null || this.thSignup.ThreadState != System.Threading.ThreadState.Suspended)
+            if (this.thSignup == null || !this.signupPaused)
             {
                 this.printLog(string.Concat(this.userid, " -> 가입 작업 시작"));
-                this.thSignup = new Thread(new ThreadStart(this.signupBand));
-                this.thSignup.Start();
+                this.thSignup = this.signupWork.Start(this.signupBand);
             }
             else
             {
@@ -634,21 +633,21 @@ namespace BandProgram
                 {
                     return;
                 }
-                this.thSignup.Resume();
+                this.signupPaused = false;
+                this.signupWork.Resume();
             }
             this.toggleToBandSign(false, false);
         }
 
         private void button14_Click(object sender, EventArgs e)
         {
-            try
+            if (this.thSignup == null)
             {
-                this.thSignup.Suspend();
-                this.toggleToBandSign(true, false);
+                return;
             }
-            catch
-            {
-            }
+            this.signupWork.Pause();
+            this.signupPaused = true;
+            this.toggleToBandSign(true, false);
         }
         private void toggleToBandSign(bool enable, bool finished)
         {
@@ -667,15 +666,12 @@ namespace BandProgram
             this.isOperating(3, !enable, finished);
         }
         private Thread thSignup;
+        private readonly WorkControl signupWork = new WorkControl();
+        private bool signupPaused;
         private void button10_Click(object sender, EventArgs e)
         {
-            try
-            {
-                this.thSignup.Abort();
-            }
-            catch
-            {
-            }
+            this.signupWork.Reset();
+            this.signupPaused = false;
             this.toggleToBandSign(true, true);
         }
 

@@ -11,6 +11,12 @@ namespace BandProgram
 	{
 		private Thread thPosting;
 
+		private readonly WorkControl work = new WorkControl();
+
+		private bool isPaused;
+
+		private bool isReset;
+
 		private FunctionList fl = new FunctionList();
 
 		private string path = "";
@@ -122,7 +128,7 @@ namespace BandProgram
 		{
 			this.btnStart.Enabled = !isRunning;
 			this.btnPause.Enabled = false;
-			if (this.thPosting != null && this.thPosting.ThreadState != ThreadState.Aborted)
+			if (this.thPosting != null && !this.isReset)
 			{
 				this.btnInit.Enabled = true;
 				return;
@@ -137,26 +143,21 @@ namespace BandProgram
 
 		private void btnInit_Click(object sender, EventArgs e)
 		{
-			try
-			{
-				this.thPosting.Abort();
-			}
-			catch
-			{
-			}
+			this.work.Reset();
+			this.isReset = true;
+			this.isPaused = false;
 			this.toggleState(true, true);
 		}
 
 		private void btnPause_Click(object sender, EventArgs e)
 		{
-			try
+			if (this.thPosting == null)
 			{
-				this.thPosting.Suspend();
-				this.toggleState(true, false);
+				return;
 			}
-			catch
-			{
-			}
+			this.work.Pause();
+			this.isPaused = true;
+			this.toggleState(true, false);
 		}
 
 		private void btnRemove_Click(object sender, EventArgs e)
@@ -167,7 +168,7 @@ namespace BandProgram
 		private void btnStart_Click(object sender, EventArgs e)
 		{
             //Julian 포스팅작업시작
-			if (this.thPosting == null || this.thPosting.ThreadState != ThreadState.Suspended)
+			if (this.thPosting == null || !this.isPaused)
 			{
 				if (this.type == 0)
 				{
@@ -181,8 +182,8 @@ namespace BandProgram
 				{
 					this.printLog(string.Concat(this.id, " -> 대화 작업 시작"));
 				}
-				this.thPosting = new Thread(new ThreadStart(this.startWork));
-				this.thPosting.Start();
+				this.isReset = false;
+				this.thPosting = this.work.Start(this.startWork);
 			}
 			else
 			{
@@ -199,7 +200,8 @@ namespace BandProgram
 					this.printLog(string.Concat(this.id, " -> 대화 작업 재시작"));
 				}
 				this.resume();
-				this.thPosting.Resume();
+				this.isPaused = false;
+				this.work.Resume();
 			}
 			this.toggleState(false, false);
 		}

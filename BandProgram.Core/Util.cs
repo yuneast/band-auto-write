@@ -301,7 +301,15 @@ namespace BandProgram
 
 		public DateTime delay(int MS)
 		{
-			Thread.Sleep(MS);
+			WorkControl.Checkpoint();
+			int remaining = MS;
+			while (remaining > 0)
+			{
+				int slice = Math.Min(remaining, WorkControl.SliceMs);
+				Thread.Sleep(slice);
+				remaining -= slice;
+				WorkControl.Checkpoint();
+			}
 			return DateTime.Now;
 		}
 

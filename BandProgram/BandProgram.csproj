@@ -13,6 +13,8 @@
     <Product>BandProgram</Product>
     <Copyright>Copyright © 2018</Copyright>
     <Version>1.0.0</Version>
+    <!-- .NET 10에서 실행 시 PlatformNotSupportedException을 던지는 API -->
+    <WarningsAsErrors>WFDEV006;SYSLIB0006;CS0618</WarningsAsErrors>
   </PropertyGroup>
 
   <ItemGroup>
