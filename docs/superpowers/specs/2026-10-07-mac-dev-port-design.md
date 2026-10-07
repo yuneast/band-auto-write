@@ -1,7 +1,7 @@
 # BandProgram 맥 개발환경 포팅 설계
 
 - 작성일: 2026-10-07
-- 상태: 검토 대기
+- 상태: 승인됨 (2026-10-07), 시험 빌드 결과 반영
 
 ## 1. 목적과 범위
 
@@ -71,24 +71,29 @@ BandProgram.sln
 
 | 현재 | 위치 | 변경 |
 |---|---|---|
-| `Clipboard.SetText` + STA 스레드 | `Util.sendKeyPaste` | `IClipboard.SetText(string)`. Windows 구현은 UI 프로젝트의 `WinFormsClipboard`(기존 STA 스레드 방식 유지), 맥 구현은 Core의 `PbcopyClipboard`(`pbcopy` 프로세스). `Util.Clipboard` 정적 속성으로 주입하고, 기본값은 OS에 따라 고른다. |
-| `Keys.LeftControl + "v"` | `Util.sendKeyPaste` | `PlatformKeys.PasteModifier`: 맥은 `Keys.Command`, 그 외 `Keys.LeftControl`. |
-| `WinHttpRequest` COM | `Util.requestHTTP` 2곳 | 공유 `HttpClient`로 동기 GET(`GetStringAsync(...).GetAwaiter().GetResult()`). 쿼리 문자열 조립은 그대로 둔다. |
-| `WebRequest` | `APIDAO` 2곳 | 같은 `HttpClient`. 실패 시 `null` 반환 동작은 유지. `Login`/`LoginSecond`/`MainForm`의 `HttpWebRequest`는 .NET 10에서도 동작하므로 그대로 둔다. |
-| `"adb.exe"` | `ADB.executeADB` | Windows는 `adb.exe`, 그 외 `adb`. 실행 실패(`Win32Exception`) 시 예외 대신 빈 문자열을 반환하고 `"[ADB] adb를 찾을 수 없어 IP 변경을 건너뜀"` 로그를 남긴다. 호출부 `Util.changeIP`의 `getDeivces()[0]`가 빈 목록에서 터지지 않도록 `getDeivces`는 최소 1개(빈 문자열) 요소를 돌려주는 기존 동작(`Split` 결과)을 유지한다. |
+| `Clipboard.SetText` + STA 스레드 | `Util.sendKeyPaste` | `IClipboard.SetText(string)`. Windows 구현은 UI 프로젝트의 `WinFormsClipboard`(기존 STA 스레드 방식 유지), 맥 구현은 Core의 `PbcopyClipboard`(`pbcopy` 프로세스, `LANG=en_US.UTF-8` 필수: 없으면 한글이 들어가지 않음). `Util.Clipboard` 정적 속성으로 주입하고, 기본값은 맥이면 `PbcopyClipboard`, 그 외 `null`(WinForms `Program`이 설정). |
+| `element.SendKeys(Keys.LeftControl + "v")` | `Util.sendKeyPaste` | Windows는 그대로. 맥은 `element.SendKeys(Keys.Command + "v")`가 동작하지 않아(시험 확인), JS로 요소에 `focus()` 후 `Actions.KeyDown(Keys.Command).SendKeys("v").KeyUp(Keys.Command)`를 쓴다. 헤드리스 Chrome에서는 붙여넣기가 되지 않는다. |
+| `Encoding.Default` | `Util` 6곳(`readAll`, `readALine`, `readAllToString`, `writeStream`, `createNotePad`, `firstLineToBack`) | .NET Framework(한국어 Windows)에서는 CP949였지만 .NET 10에서는 UTF-8이라, 고객의 기존 파일(`bandList.txt`, `bandAccount.txt`, `AutoDoc/**/contents.txt`, 모두 CP949로 확인)의 한글이 깨진다. `LegacyText.Encoding`(CP949, `CodePagesEncodingProvider` 등록)으로 바꾼다. |
+| `WinHttpRequest` COM | `Util.requestHTTP` 2곳 | 공유 `HttpClient`로 동기 GET. WinHttp처럼 HTTP 오류 상태에서도 본문을 돌려준다(`GetAsync` + `ReadAsStringAsync`, 상태 코드 검사 없음). 쿼리 문자열 조립은 그대로 둔다. COM 참조는 `dotnet build`에서 빌드되지 않으므로 csproj 전환과 같은 단계에서 바꾼다. |
+| `WebRequest` | `APIDAO`, `Login`, `LoginSecond`, `MainForm` | .NET 10에서도 맥·윈도우 모두 동작하므로 그대로 둔다(SYSLIB0014 경고만 남음). |
+| `"adb.exe"` | `ADB.executeADB` | Windows는 `adb.exe`, 그 외 `adb`. 실행 실패 시 예외는 기존처럼 호출부로 전파한다. 예외를 삼키면 `Util.changeIP(preIP, appId)`가 IP가 바뀔 때까지 자기 자신을 재귀 호출해 스택 오버플로가 나기 때문이다. 참고로 `changeIP`는 현재 어디에서도 호출되지 않는다. |
 | `Application.StartupPath`, `\\` 결합 | `FunctionList.startPath`, `Util.startChrome` | `AppPaths.DataDir`(기본 `AppContext.BaseDirectory`, Dev에서 `--data`로 변경 가능). `user-data-dir`은 `Path.Combine(DataDir, "chromedata")`, 디스크 캐시는 `Path.Combine(DataDir, "Cache")`. `BandLayout.entirePath`도 `AppPaths.DataDir`을 쓴다. |
 | 상대 경로 파일 접근(`"acc.txt"`, `"사용기록.txt"` 등) | 여러 곳 | 바꾸지 않는다. 작업 디렉터리 기준이므로 Dev 셸이 시작할 때 `Directory.SetCurrentDirectory(AppPaths.DataDir)`로 맞춘다. |
 | `ChromeDriverService` + 동봉 드라이버 | `Util.startChrome` | Selenium 4 Selenium Manager가 설치된 Chrome에 맞는 드라이버를 받는다. 옵션(창 크기, `disable-gpu` 등)과 `PageLoad` 타임아웃은 그대로. `HideCommandPromptWindow`는 유지. |
 | `Process.GetProcessesByName("chromedriver")` Kill | `Util.closeChrome` | 그대로 유지(맥에서도 프로세스 이름이 같다). |
 | `MessageBox.Show(str1)` | `FunctionList.getBandInfoFromUrl` | 디버그 잔재로 보고 삭제한다. 이것이 유일한 동작 변경이다(고객에게 URL 팝업이 뜨지 않게 됨). |
 | `OpenFileDialog` | `FunctionList.showFileOpenDialog` | UI 프로젝트의 `ImageFileDialog.Show()`로 옮기고 `NewPostForm`, `PostingAddForm` 호출부를 바꾼다. |
-| `MenuItem`/`ContextMenu` (.NET Core 3.1에서 삭제됨) | `LoginSecond`, `MainForm`, `BandLayout`, `NewPostForm`, `PostingAddForm` | `ContextMenuStrip`/`ToolStripMenuItem`으로 바꾼다. 클릭 핸들러의 `((MenuItem)obj).Index`는 `Owner.Items.IndexOf(item)`로 바꿔 인덱스 의미를 유지한다. |
+| `MenuItem`/`ContextMenu` (.NET 10에서 컴파일은 되지만 실행 시 `PlatformNotSupportedException`, 경고 WFDEV006) | `LoginSecond`, `MainForm`, `BandLayout`, `NewPostForm`, `PostingAddForm` | `ContextMenuStrip`/`ToolStripMenuItem`으로 바꾼다. 클릭 핸들러의 `((MenuItem)obj).Index`는 `Owner.Items.IndexOf(item)`로 바꿔 인덱스 의미를 유지한다. |
 | `Process.Start(경로)` | `NewPostForm`, `PostingAddForm` | .NET 10은 `UseShellExecute` 기본값이 `false`라 폴더·이미지 열기가 실패한다. `new ProcessStartInfo(path) { UseShellExecute = true }`로 바꾼다. |
+| WinForms 기본 글꼴·DPI | `Program.Main` | .NET Core 3.0부터 기본 글꼴이 `Microsoft Sans Serif 8.25pt`에서 `Segoe UI 9pt`로 바뀌어 레이아웃이 어긋난다. `Application.SetDefaultFont(new Font("Microsoft Sans Serif", 8.25f))`와 `Application.SetHighDpiMode(HighDpiMode.DpiUnaware)`로 기존과 맞춘다. |
+| `Properties/AssemblyInfo.cs`, `App.config`의 `<startup>` | | SDK가 어셈블리 정보를 생성하므로 삭제하고 제목·버전은 csproj로 옮긴다. `<startup>`은 .NET 10에서 의미가 없어 제거한다. |
 
 ## 5. 일시정지·재개·초기화 (`WorkControl`)
 
 ### 문제
 `Thread.Suspend/Resume/Abort`는 .NET Core 이후 `PlatformNotSupportedException`을 던진다.
+포스팅이 일시정지된 동안 댓글 작업을 시작할 수 있으므로(기존 동작), 작업 제어는 전역이 아니라
+작업 종류마다 하나씩 갖는 인스턴스로 만든다.
 호출부가 `catch {}`로 감싸져 있어 고객에게는 버튼이 눌려도 작업이 계속 도는 것으로 보인다.
 
 ### 설계
@@ -97,14 +102,14 @@ BandProgram.sln
 
 ```csharp
 // BandProgram.Core/Work/WorkControl.cs
-public static class WorkControl
+public sealed class WorkControl
 {
     // 작업 스레드를 등록하고 실행. 등록된 스레드에서만 delay()가 확인 지점이 된다.
-    public static Thread Start(Action work);     // 새 세대 번호 부여, IsBackground = true
-    public static void Pause();                  // 게이트 닫기
-    public static void Resume();                 // 게이트 열기
-    public static void Reset();                  // 세대 번호 증가 + 게이트 열기
-    internal static void Checkpoint();           // Util.delay()가 Thread.Sleep 전후에 호출
+    public Thread Start(Action work);            // 새 세대 번호 부여, IsBackground = true
+    public void Pause();                         // 게이트 닫기
+    public void Resume();                        // 게이트 열기
+    public void Reset();                         // 세대 번호 증가 + 게이트 열기
+    public static void Checkpoint();             // Util.delay()가 호출. 현재 스레드의 WorkControl을 확인
 }
 ```
 
@@ -120,18 +125,19 @@ public static class WorkControl
   다음 확인 지점에서 멈춘다(보통 수백 ms).
 
 ### 호출부 변경
-- `BandLayout`: `new Thread(startWork).Start()` → `WorkControl.Start(startWork)`,
+- `BandLayout`: 인스턴스마다 `WorkControl work` 필드를 두고 `new Thread(startWork).Start()` → `work.Start(startWork)`,
   `Suspend` → `Pause`, `Resume` → `Resume`, `Abort` → `Reset`.
   `ThreadState.Suspended`/`Aborted` 검사는 `BandLayout` 내부 상태 필드(`isPaused`, `isReset`)로 바꾼다.
-- `MainForm` 가입 작업(`button15`, `button14`, `button10`): 같은 방식.
+- `MainForm` 가입 작업(`button15`, `button14`, `button10`): `signupWork` 필드로 같은 방식.
 - 초기화된 작업은 `startWork` 끝의 `refresh()`/`toggleState()`를 실행하지 않는다(기존 `Abort`와 같음).
   버튼 상태는 기존처럼 초기화 핸들러가 직접 `toggleState(true, true)`로 맞춘다.
 
 ## 6. 셀렉터 실패 추적 (`SelectorTrace`)
 
-`Util.findElement`/`findElements`/`findElementsWithXPath`와 자식 요소 오버로드에
-`[CallerMemberName]`, `[CallerFilePath]`, `[CallerLineNumber]` 선택적 매개변수를 추가한다.
-기존 호출부는 수정 없이 컴파일되고, 호출 위치가 자동으로 채워진다.
+`Util.findElement`/`findElements`/`findElementsWithXPath`와 자식 요소 오버로드에서 실패를 감지하고,
+호출 위치는 `StackTrace`에서 `Util`이 아닌 첫 프레임(파일·줄 포함)으로 찾는다. `[CallerLineNumber]` 방식은
+`clickByCss`, `delayNext`, `sendKey(css, ...)` 같은 `Util` 내부 래퍼를 거치면 래퍼 위치만 남아서 쓰지 않는다.
+메서드 시그니처는 바뀌지 않는다.
 
 요소를 못 찾았을 때(단일: 예외, 복수: 0개) 반환값은 그대로 두고 아래를 기록한다.
 
@@ -142,7 +148,8 @@ public static class WorkControl
   snapshot: devdata/failures/20261007-153012-416/{page.html, screen.png}
 ```
 
-- `SelectorTrace.Sink`(`Action<string>`)로 출력 대상을 정한다. Dev는 콘솔, WinForms는 `사용기록.txt`에 한 줄.
+- `SelectorTrace.Sink`(`Action<string>`)로 출력 대상을 정한다. Dev는 콘솔, WinForms는 `selector-miss.log`에 추가한다
+  (고객이 보는 `사용기록.txt`를 어지럽히지 않기 위해).
 - `SelectorTrace.SnapshotEnabled`: Dev에서만 `true`. HTML(`driver.PageSource`)과 스크린샷을 저장한다.
 - 같은 위치에서 1초 안에 반복된 실패는 한 번만 기록한다(대기 루프에서 `findElements`를 반복 호출하는 경우).
 - `findElements`가 0개를 돌려주는 것이 정상인 경우(존재 여부 확인)도 기록된다. 로그일 뿐 동작은 같다.
@@ -160,8 +167,8 @@ band> chrome                  로그인 없이 Chrome만 열기
 band> bands                   fl.getBandList() 결과 출력
 band> search <검색어> [--min N --max N]
 band> signup <밴드URL> <닉네임>
-band> post | comment | chat   dev.json의 파라미터로 setXxxParam 후 WorkControl.Start(startXxx)
-band> pause | resume | init   WorkControl.Pause/Resume/Reset
+band> post | comment | chat   dev.json의 파라미터로 setXxxParam 후 work.Start(startXxx)
+band> pause | resume | init   work.Pause/Resume/Reset (셸 전체에서 WorkControl 하나)
 band> sel <css>               현재 페이지에서 셀렉터 실행 → 개수와 앞 5개의 텍스트 요약
 band> xpath <xpath>           같은 기능, XPath
 band> url [주소]              현재 URL 출력 / 이동
@@ -174,8 +181,8 @@ band> quit                    Chrome 닫고 종료 (이때만 닫힘)
 - 라이선스 로그인(newsoft.kr)은 거치지 않는다. 라이선스 확인은 UI 계층에만 있다.
 - `devdata/`는 `.gitignore`에 넣는다. `devdata.example/`에 `dev.json` 예시와 빈 `AutoDoc` 폴더 구조를 커밋한다.
 - 포스팅·댓글·채팅은 실제로 작성된다. 테스트용 밴드에서 실행한다.
-- `.vscode/launch.json`: Dev 셸 디버그 구성과 "All Exceptions" 예외 중단 설정을 커밋한다.
-  예외 중단을 켜면 `catch {}`에 삼켜지기 전의 `NoSuchElementException`에서 멈춘다.
+- `.vscode/launch.json`, `.vscode/tasks.json`: Dev 셸 디버그 구성을 커밋한다. 예외 중단("All Exceptions")은
+  launch.json으로 설정할 수 없어 `docs/dev-on-mac.md`에 VS Code 중단점 패널에서 켜는 방법을 적는다.
 
 ## 8. 저장소 정리
 
@@ -185,17 +192,18 @@ band> quit                    Chrome 닫고 종료 (이때만 닫힘)
   `bin/Debug/bandAccount.txt`(밴드 계정, Base64), `bin/Debug/chromedata/`(로그인 쿠키)가 올라가 있다.
   추적 해제만으로는 기록에서 지워지지 않는다. 비밀번호 변경을 권장하고, 기록 삭제(`git filter-repo`)는
   강제 푸시가 필요하므로 이 작업과 별개로 사용자가 결정한다.
-- `bin/Debug/AutoDoc/` 샘플 중 텍스트 파일은 `BandProgram.Tests/Fixtures/AutoDoc/`으로 옮겨 테스트에 쓴다.
+- 테스트용 포스팅 폴더는 실제 원고를 쓰지 않고, 테스트가 임시 폴더에 CP949 파일을 만들어 쓴다.
 
 ## 9. 검증
 
-1. **빌드:** 맥에서 `dotnet build BandProgram.sln`이 성공한다.
+1. **빌드:** 맥에서 `dotnet build BandProgram.sln`이 성공하고, 실행 시 실패하는 API 경고
+   (`WFDEV006`, `SYSLIB0006`, `CS0618` Suspend/Resume)가 0개다.
 2. **단위 테스트(`BandProgram.Tests`):**
    - `Util.calculateTime`, `FunctionList.stringToIntList`/`intListToString`(private → `internal` +
-     `InternalsVisibleTo`), `getPostingList`/`getPostingNum`을 Fixtures 폴더로 실행. 기대값은 원본 코드
+     `InternalsVisibleTo`), `getPostingList`/`getPostingNum`을 임시 폴더에 만든 CP949 원고로 실행. 기대값은 원본 코드
      동작에서 가져온다.
    - `WorkControl`: 일시정지 시 등록 스레드가 멈추고 재개 시 진행, 초기화 시 이전 세대가 멈추고 새 세대는 진행,
-     미등록 스레드는 영향 없음.
+     미등록 스레드는 영향 없음, 서로 다른 인스턴스는 독립.
    - `SelectorTrace`: 호출 위치 기록, 1초 중복 억제.
    - Selenium이 필요한 흐름은 단위 테스트하지 않는다.
 3. **맥 수동 확인(사용자):** Dev 셸에서 `login` → `bands` → `search` → 테스트 밴드에 `post` →
@@ -207,14 +215,14 @@ band> quit                    Chrome 닫고 종료 (이때만 닫힘)
 ## 10. 작업 순서 (커밋 단위)
 
 1. `.gitignore` 추가, 빌드 산출물·`.vs`·`packages` 추적 해제
-2. SDK 스타일 csproj, .NET 10, `PackageReference`(Selenium은 아직 3.141), `EnableWindowsTargeting`
-   → `MenuItem`→`ContextMenuStrip`, `Process.Start` 수정으로 빌드 통과
-3. `WorkControl` 도입, `Suspend/Resume/Abort` 교체 (+ 테스트)
-4. `BandProgram.Core` 분리, 4장 대체 적용 (+ 테스트 프로젝트, 순수 로직 테스트)
-5. Selenium 4 업그레이드, 동봉 `chromedriver.exe` 제거
-6. `SelectorTrace` (+ 테스트)
-7. `BandProgram.Dev` 셸, `devdata.example`, `.vscode/launch.json`
-8. Windows 스모크 테스트 체크리스트 문서
+2. SDK 스타일 csproj, .NET 10(Selenium은 아직 3.141): WinHttp→HttpClient, CP949, 글꼴·DPI,
+   `MenuItem`→`ContextMenuStrip`, `Process.Start`
+3. `BandProgram.Core` 분리, 나머지 4장 대체 적용 (+ 테스트 프로젝트, 순수 로직 테스트)
+4. `WorkControl` 도입, `Suspend/Resume/Abort` 교체 (+ 테스트). 맥에서 테스트하려면 Core가 먼저 있어야 해서 3과 순서를 바꿨다.
+5. `SelectorTrace` (+ 테스트)
+6. `BandProgram.Dev` 셸(`account add`로 CP949 계정 파일 작성 포함), `devdata.example`, `.vscode`, `docs/dev-on-mac.md`
+7. Selenium 4 업그레이드, 동봉 `chromedriver.exe` 제거. Dev 셸로 맥에서 Chrome 실행을 검증하기 위해 뒤로 옮겼다.
+8. Windows 게시 스크립트와 스모크 테스트 체크리스트
 
 ## 11. 위험
 
