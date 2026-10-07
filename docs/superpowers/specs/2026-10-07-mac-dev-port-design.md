@@ -73,7 +73,7 @@ BandProgram.sln
 |---|---|---|
 | `Clipboard.SetText` + STA 스레드 | `Util.sendKeyPaste` | `IClipboard.SetText(string)`. Windows 구현은 UI 프로젝트의 `WinFormsClipboard`(기존 STA 스레드 방식 유지), 맥 구현은 Core의 `PbcopyClipboard`(`pbcopy` 프로세스, `LANG=en_US.UTF-8` 필수: 없으면 한글이 들어가지 않음). `Util.Clipboard` 정적 속성으로 주입하고, 기본값은 맥이면 `PbcopyClipboard`, 그 외 `null`(WinForms `Program`이 설정). |
 | `element.SendKeys(Keys.LeftControl + "v")` | `Util.sendKeyPaste` | Windows는 그대로. 맥은 `element.SendKeys(Keys.Command + "v")`가 동작하지 않아(시험 확인), JS로 요소에 `focus()` 후 `Actions.KeyDown(Keys.Command).SendKeys("v").KeyUp(Keys.Command)`를 쓴다. 헤드리스 Chrome에서는 붙여넣기가 되지 않는다. |
-| `Encoding.Default` | `Util` 6곳(`readAll`, `readALine`, `readAllToString`, `writeStream`, `createNotePad`, `firstLineToBack`) | .NET Framework(한국어 Windows)에서는 CP949였지만 .NET 10에서는 UTF-8이라, 고객의 기존 파일(`bandList.txt`, `bandAccount.txt`, `AutoDoc/**/contents.txt`, 모두 CP949로 확인)의 한글이 깨진다. `LegacyText.Encoding`(CP949, `CodePagesEncodingProvider` 등록)으로 바꾼다. |
+| `Encoding.Default` | `Util` 6곳(`readAll`, `readALine`, `readAllToString`, `writeStream`, `createNotePad`, `firstLineToBack`) | `AppText.Encoding`(UTF-8, BOM 없음)으로 명시한다. 기존 CP949 파일 처리는 4-1장. |
 | `WinHttpRequest` COM | `Util.requestHTTP` 2곳 | 공유 `HttpClient`로 동기 GET. WinHttp처럼 HTTP 오류 상태에서도 본문을 돌려준다(`GetAsync` + `ReadAsStringAsync`, 상태 코드 검사 없음). 쿼리 문자열 조립은 그대로 둔다. COM 참조는 `dotnet build`에서 빌드되지 않으므로 csproj 전환과 같은 단계에서 바꾼다. |
 | `WebRequest` | `APIDAO`, `Login`, `LoginSecond`, `MainForm` | .NET 10에서도 맥·윈도우 모두 동작하므로 그대로 둔다(SYSLIB0014 경고만 남음). |
 | `"adb.exe"` | `ADB.executeADB` | Windows는 `adb.exe`, 그 외 `adb`. 실행 실패 시 예외는 기존처럼 호출부로 전파한다. 예외를 삼키면 `Util.changeIP(preIP, appId)`가 IP가 바뀔 때까지 자기 자신을 재귀 호출해 스택 오버플로가 나기 때문이다. 참고로 `changeIP`는 현재 어디에서도 호출되지 않는다. |
@@ -87,6 +87,28 @@ BandProgram.sln
 | `Process.Start(경로)` | `NewPostForm`, `PostingAddForm` | .NET 10은 `UseShellExecute` 기본값이 `false`라 폴더·이미지 열기가 실패한다. `new ProcessStartInfo(path) { UseShellExecute = true }`로 바꾼다. |
 | WinForms 기본 글꼴·DPI | `Program.Main` | .NET Core 3.0부터 기본 글꼴이 `Microsoft Sans Serif 8.25pt`에서 `Segoe UI 9pt`로 바뀌어 레이아웃이 어긋난다. `Application.SetDefaultFont(new Font("Microsoft Sans Serif", 8.25f))`와 `Application.SetHighDpiMode(HighDpiMode.DpiUnaware)`로 기존과 맞춘다. |
 | `Properties/AssemblyInfo.cs`, `App.config`의 `<startup>` | | SDK가 어셈블리 정보를 생성하므로 삭제하고 제목·버전은 csproj로 옮긴다. `<startup>`은 .NET 10에서 의미가 없어 제거한다. |
+
+## 4-1. 텍스트 파일 UTF-8 전환
+
+모든 텍스트 파일은 UTF-8(BOM 없음)로만 읽고 쓴다. 맥에서 VS Code로 원고와 목록 파일을 바로 편집하기 위해서다.
+
+### 문제
+.NET Framework 버전은 `Encoding.Default`(한국어 Windows에서 CP949)로 파일을 저장했다. 고객 PC의
+`bandList.txt`, `bandAccount.txt`, `AutoDoc/**/contents.txt`가 모두 CP949임을 확인했다.
+UTF-8로만 읽으면 업데이트 직후 고객의 한글 데이터가 모두 깨진다.
+
+### 설계: 시작 시 1회 변환 (`Utf8Migration`)
+- 대상: 데이터 폴더 최상위의 `*.txt`와 `AutoDoc/` 아래 모든 `*.txt`. `chromedata/`, `backup-cp949/` 등 다른 폴더는 보지 않는다.
+- 판별: 엄격한 UTF-8 디코딩에 성공하면(ASCII, BOM 있는 UTF-8 포함) 그대로 둔다. 실패하면 CP949로 보고 변환한다.
+- 변환: 원본을 `backup-cp949/<같은 상대 경로>`에 복사한 뒤(이미 있으면 덮어쓰지 않음, 처음 원본 보존),
+  임시 파일에 UTF-8로 쓰고 원래 파일과 바꾼다.
+- 실행 시점: WinForms `Program.Main`과 Dev 셸 시작 시, 어떤 파일도 읽기 전에 실행한다. 두 번째 실행부터는 바꿀 파일이 없다.
+- 기록: WinForms는 변환·실패 목록을 `encoding-migration.log`에 남기고, 실패가 있으면 메시지 상자로 알린다. Dev 셸은 콘솔에 출력한다.
+- 파일 하나가 실패해도 나머지는 계속 변환하고 프로그램은 시작한다.
+
+### 남는 위험
+- 변환 뒤 구버전 exe로 되돌리면 한글이 깨진다. `backup-cp949/`의 원본을 되돌려 넣으면 복구된다.
+- 한두 글자뿐인 아주 짧은 CP949 파일은 우연히 올바른 UTF-8로 판별돼 변환되지 않을 수 있다. 실제 원고와 목록 파일에서는 사실상 일어나지 않는다.
 
 ## 5. 일시정지·재개·초기화 (`WorkControl`)
 
@@ -192,7 +214,7 @@ band> quit                    Chrome 닫고 종료 (이때만 닫힘)
   `bin/Debug/bandAccount.txt`(밴드 계정, Base64), `bin/Debug/chromedata/`(로그인 쿠키)가 올라가 있다.
   추적 해제만으로는 기록에서 지워지지 않는다. 비밀번호 변경을 권장하고, 기록 삭제(`git filter-repo`)는
   강제 푸시가 필요하므로 이 작업과 별개로 사용자가 결정한다.
-- 테스트용 포스팅 폴더는 실제 원고를 쓰지 않고, 테스트가 임시 폴더에 CP949 파일을 만들어 쓴다.
+- 테스트용 포스팅 폴더는 실제 원고를 쓰지 않고, 테스트가 임시 폴더에 파일을 만들어 쓴다.
 
 ## 9. 검증
 
@@ -200,7 +222,8 @@ band> quit                    Chrome 닫고 종료 (이때만 닫힘)
    (`WFDEV006`, `SYSLIB0006`, `CS0618` Suspend/Resume)가 0개다.
 2. **단위 테스트(`BandProgram.Tests`):**
    - `Util.calculateTime`, `FunctionList.stringToIntList`/`intListToString`(private → `internal` +
-     `InternalsVisibleTo`), `getPostingList`/`getPostingNum`을 임시 폴더에 만든 CP949 원고로 실행. 기대값은 원본 코드
+     `InternalsVisibleTo`), `getPostingList`/`getPostingNum`을 임시 폴더에 만든 원고로 실행. `Utf8Migration`: CP949 변환과 백업,
+     UTF-8·ASCII·BOM 파일 유지, 재실행 시 변경 없음, 대상 폴더 범위, 기존 백업 보존. 기대값은 원본 코드
      동작에서 가져온다.
    - `WorkControl`: 일시정지 시 등록 스레드가 멈추고 재개 시 진행, 초기화 시 이전 세대가 멈추고 새 세대는 진행,
      미등록 스레드는 영향 없음, 서로 다른 인스턴스는 독립.
@@ -215,12 +238,12 @@ band> quit                    Chrome 닫고 종료 (이때만 닫힘)
 ## 10. 작업 순서 (커밋 단위)
 
 1. `.gitignore` 추가, 빌드 산출물·`.vs`·`packages` 추적 해제
-2. SDK 스타일 csproj, .NET 10(Selenium은 아직 3.141): WinHttp→HttpClient, CP949, 글꼴·DPI,
+2. SDK 스타일 csproj, .NET 10(Selenium은 아직 3.141): WinHttp→HttpClient, UTF-8 명시, 글꼴·DPI,
    `MenuItem`→`ContextMenuStrip`, `Process.Start`
-3. `BandProgram.Core` 분리, 나머지 4장 대체 적용 (+ 테스트 프로젝트, 순수 로직 테스트)
+3. `BandProgram.Core` 분리, 나머지 4장 대체 적용, CP949→UTF-8 변환 (+ 테스트 프로젝트). 2와 3 사이 커밋은 배포하지 않는다.
 4. `WorkControl` 도입, `Suspend/Resume/Abort` 교체 (+ 테스트). 맥에서 테스트하려면 Core가 먼저 있어야 해서 3과 순서를 바꿨다.
 5. `SelectorTrace` (+ 테스트)
-6. `BandProgram.Dev` 셸(`account add`로 CP949 계정 파일 작성 포함), `devdata.example`, `.vscode`, `docs/dev-on-mac.md`
+6. `BandProgram.Dev` 셸(`account add`로 Base64 비밀번호 계정 추가 포함), `devdata.example`, `.vscode`, `docs/dev-on-mac.md`
 7. Selenium 4 업그레이드, 동봉 `chromedriver.exe` 제거. Dev 셸로 맥에서 Chrome 실행을 검증하기 위해 뒤로 옮겼다.
 8. Windows 게시 스크립트와 스모크 테스트 체크리스트
 

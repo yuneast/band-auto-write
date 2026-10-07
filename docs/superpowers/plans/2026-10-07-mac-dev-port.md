@@ -15,7 +15,8 @@
 - 대상 프레임워크: Core·Dev·Tests는 `net10.0`, WinForms는 `net10.0-windows` + `EnableWindowsTargeting=true`.
 - 자동화 로직(흐름, 셀렉터, 대기 시간)은 바꾸지 않는다. 이 계획에 적힌 변경만 한다.
 - 네임스페이스는 모든 프로젝트에서 기존과 같은 `BandProgram`을 쓴다(Dev는 `BandProgram.Dev`).
-- 텍스트 파일 인코딩은 기존 데이터와 같은 CP949(`LegacyText.Encoding`)를 쓴다.
+- 텍스트 파일은 UTF-8(BOM 없음, `AppText.Encoding`)로만 읽고 쓴다. .NET Framework 버전이 CP949로 저장한 기존 파일은 프로그램 시작 시 `Utf8Migration.Run`이 한 번 UTF-8로 바꾸고 원본을 `backup-cp949/`에 남긴다.
+- Task 2와 Task 3 사이의 커밋은 고객에게 배포하지 않는다(변환 기능이 Task 3에서 들어온다).
 - 브라우저는 재로그인, 계정 변경, 창 닫기, 라이선스 세션 끊김, Dev `quit`에서만 닫힌다.
 - 모든 명령은 저장소 루트(`/Users/yundongjun/Documents/GitHub/band-auto-write`)에서 실행한다.
 - 빌드 로그는 한국어로 나온다. 성공은 `빌드했습니다.`와 `오류 0개`, 테스트 성공은 `통과!`(또는 `Passed!`)로 확인한다.
@@ -23,7 +24,7 @@
 
 ## Review Focus
 
-1. **기존 고객 데이터의 한글:** CP949로 저장된 `bandList.txt`, `bandAccount.txt`, `AutoDoc/**/contents.txt`를 읽고 쓰면 한글이 그대로여야 한다. 테스트: Task 2 `LegacyTextTests`, Task 3 `PostingFolderTests`.
+1. **업데이트 직후 고객 데이터:** CP949로 저장된 `bandList.txt`, `bandAccount.txt`, `AutoDoc/**/contents.txt`가 첫 실행에서 UTF-8로 바뀌고 한글이 그대로여야 하며, 원본은 `backup-cp949/`에 남고, 다시 실행해도 아무것도 바뀌지 않아야 한다. 테스트: Task 3 `Utf8MigrationTests`.
 2. **일시정지 중 다른 작업 시작:** 포스팅을 일시정지한 상태에서 댓글을 시작해도, 재개하면 포스팅이 이어져야 한다. 테스트: Task 4 `Instances_are_independent`.
 3. **긴 예약 대기 중 일시정지·초기화:** `delay(수십 분)` 안에서도 바로 멈춰야 한다. 테스트: Task 4 `Pause_inside_long_delay_stops_promptly`.
 4. **UI 스레드와 목록 로딩 스레드:** 일시정지 중에도 `delay()`를 부르는 비작업 스레드는 멈추지 않아야 한다. 테스트: Task 4 `Unregistered_thread_is_not_affected`.
@@ -51,8 +52,9 @@ BandProgram/                                WinForms 앱 (고객용)
 BandProgram.Core/                           (Task 3) 공용 로직
   BandProgram.Core.csproj
   ADB.cs APIDAO.cs AccountInfo.cs AppConfiguration.cs Band.cs BandInfo.cs FunctionList.cs
-  Global.cs ImageFile.cs Naver.cs NaverMobile.cs Post.cs Response.cs Util.cs LegacyText.cs  (git mv)
+  Global.cs ImageFile.cs Naver.cs NaverMobile.cs Post.cs Response.cs Util.cs AppText.cs  (git mv)
   Platform/AppPaths.cs Platform/IClipboard.cs Platform/PbcopyClipboard.cs
+  Migration/Utf8Migration.cs                (Task 3) CP949 → UTF-8 1회 변환
   Work/WorkControl.cs                       (Task 4)
   Diagnostics/SelectorTrace.cs              (Task 5)
 BandProgram.Tests/                          (Task 3~6) xUnit
@@ -142,16 +144,16 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
 - Replace: `BandProgram/BandProgram.csproj`
 - Delete: `BandProgram/packages.config`, `BandProgram/Properties/AssemblyInfo.cs`, `BandProgram/.vs/` 폴더(로컬)
 - Modify: `BandProgram/App.config` (`<startup>` 제거)
-- Create: `BandProgram/LegacyText.cs`, `BandProgram/LegacyMenu.cs`, `BandProgram/ShellOpen.cs`
-- Modify: `BandProgram/Util.cs` (WinHttp → HttpClient, `Encoding.Default` → `LegacyText.Encoding`)
+- Create: `BandProgram/AppText.cs`, `BandProgram/LegacyMenu.cs`, `BandProgram/ShellOpen.cs`
+- Modify: `BandProgram/Util.cs` (WinHttp → HttpClient, `Encoding.Default` → `AppText.Encoding`)
 - Modify: `BandProgram/Program.cs` (글꼴·DPI)
 - Modify: `BandProgram/LoginSecond.cs`, `MainForm.cs`, `BandLayout.cs`, `NewPostForm.cs`, `PostingAddForm.cs` (메뉴)
 - Modify: `BandProgram/NewPostForm.cs`, `PostingAddForm.cs` (`Process.Start`)
 
 **Interfaces:**
-- Produces: `LegacyText.Encoding` (`System.Text.Encoding`, CP949), `LegacyMenu.Create(EventHandler onClick, params string[] labels) : ContextMenuStrip`, `LegacyMenu.IndexOf(object sender) : int`, `ShellOpen.Open(string path) : void`
+- Produces: `AppText.Encoding` (`System.Text.Encoding`, UTF-8 BOM 없음), `LegacyMenu.Create(EventHandler onClick, params string[] labels) : ContextMenuStrip`, `LegacyMenu.IndexOf(object sender) : int`, `ShellOpen.Open(string path) : void`
 
-이 Task는 WinForms 프로젝트라 맥에서 테스트를 실행할 수 없다. 검증은 빌드와 "실행 시 실패하는 API" 경고 0개로 한다. `LegacyText` 테스트는 Task 3에서 Core로 옮긴 뒤 추가한다.
+이 Task는 WinForms 프로젝트라 맥에서 테스트를 실행할 수 없다. 검증은 빌드와 "실행 시 실패하는 API" 경고 0개로 한다. 인코딩 테스트와 CP949 변환은 Task 3에서 Core로 옮긴 뒤 추가한다.
 
 - [ ] **Step 1: 빌드가 실패하는 것부터 확인**
 
@@ -212,35 +214,30 @@ rm -rf BandProgram/.vs BandProgram/obj
 Run: `dotnet build BandProgram/BandProgram.csproj 2>&1 | grep -E " error " | sed -E 's/ \[.*\]//' | sort -u`
 Expected: `Util.cs(17,7): error CS0246: 'WinHttp' ...` 한 종류만 나온다.
 
-- [ ] **Step 4: `LegacyText` 추가**
+- [ ] **Step 4: `AppText` 추가**
 
-`BandProgram/LegacyText.cs`:
+`BandProgram/AppText.cs`:
 
 ```csharp
 using System.Text;
 
 namespace BandProgram
 {
-	// .NET Framework의 Encoding.Default는 한국어 Windows에서 CP949였다.
-	// .NET 10의 Encoding.Default는 UTF-8이라 기존 고객 파일을 읽으려면 CP949를 명시해야 한다.
-	public static class LegacyText
+	// 모든 텍스트 파일은 UTF-8(BOM 없음)로 읽고 쓴다.
+	// .NET Framework 버전이 CP949(한국어 Windows의 Encoding.Default)로 저장한 파일은
+	// 프로그램 시작 시 Utf8Migration이 한 번 변환한다.
+	public static class AppText
 	{
-		public static readonly Encoding Encoding;
-
-		static LegacyText()
-		{
-			Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
-			Encoding = Encoding.GetEncoding(949);
-		}
+		public static readonly Encoding Encoding = new UTF8Encoding(false);
 	}
 }
 ```
 
-`BandProgram/Util.cs`에서 `Encoding.Default` 6곳(`createNotePad`, `firstLineToBack`, `readALine`, `readAll`, `readAllToString`, `writeStream`)을 모두 `LegacyText.Encoding`으로 바꾼다.
+`BandProgram/Util.cs`에서 `Encoding.Default` 6곳(`createNotePad`, `firstLineToBack`, `readALine`, `readAll`, `readAllToString`, `writeStream`)을 모두 `AppText.Encoding`으로 바꾼다. .NET 10의 `Encoding.Default`도 UTF-8이지만, 의도를 코드에 드러내기 위해 명시한다.
 
 ```bash
-sed -i '' 's/Encoding\.Default/LegacyText.Encoding/g' BandProgram/Util.cs
-grep -c "LegacyText.Encoding" BandProgram/Util.cs
+sed -i '' 's/Encoding\.Default/AppText.Encoding/g' BandProgram/Util.cs
+grep -c "AppText.Encoding" BandProgram/Util.cs
 ```
 Expected: `6`
 
@@ -443,7 +440,7 @@ Expected: `빌드했습니다.`, `오류 0개`
 git add -A BandProgram
 git commit -m "Move BandProgram to SDK-style csproj on .NET 10
 
-Replace WinHttp COM with HttpClient, read/write legacy files as CP949,
+Replace WinHttp COM with HttpClient, read/write text files as UTF-8,
 replace removed MenuItem/ContextMenu with ContextMenuStrip, open files
 with UseShellExecute, and keep the .NET Framework default font and DPI.
 
@@ -456,17 +453,18 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
 
 **Files:**
 - Create: `BandProgram.Core/BandProgram.Core.csproj`
-- Move (`git mv`): `BandProgram/{ADB,APIDAO,AccountInfo,AppConfiguration,Band,BandInfo,FunctionList,Global,ImageFile,LegacyText,Naver,NaverMobile,Post,Response,Util}.cs` → `BandProgram.Core/`
-- Create: `BandProgram.Core/Platform/AppPaths.cs`, `Platform/IClipboard.cs`, `Platform/PbcopyClipboard.cs`
+- Move (`git mv`): `BandProgram/{ADB,APIDAO,AccountInfo,AppConfiguration,Band,BandInfo,FunctionList,Global,ImageFile,AppText,Naver,NaverMobile,Post,Response,Util}.cs` → `BandProgram.Core/`
+- Create: `BandProgram.Core/Platform/AppPaths.cs`, `Platform/IClipboard.cs`, `Platform/PbcopyClipboard.cs`, `BandProgram.Core/Migration/Utf8Migration.cs`
 - Modify: `BandProgram.Core/Util.cs` (클립보드·붙여넣기·chromedata 경로), `FunctionList.cs` (`startPath`, `MessageBox`, `showFileOpenDialog` 제거, private 헬퍼 → internal), `ADB.cs` (실행 파일 이름)
 - Create: `BandProgram/WinFormsClipboard.cs`, `BandProgram/ImageFileDialog.cs`
-- Modify: `BandProgram/BandProgram.csproj` (Core 참조), `Program.cs` (클립보드), `BandLayout.cs` (`entirePath`), `NewPostForm.cs`·`PostingAddForm.cs` (`ImageFileDialog.Show()`)
-- Create: `BandProgram.Tests/` (xUnit) + 테스트 파일 5개
+- Modify: `BandProgram/BandProgram.csproj` (Core 참조), `Program.cs` (클립보드, CP949 변환 실행), `BandLayout.cs` (`entirePath`), `NewPostForm.cs`·`PostingAddForm.cs` (`ImageFileDialog.Show()`)
+- Create: `BandProgram.Tests/` (xUnit) + 테스트 파일 6개
 - Modify: `BandProgram.sln`
 
 **Interfaces:**
-- Consumes: `LegacyText.Encoding` (Task 2)
+- Consumes: `AppText.Encoding` (Task 2)
 - Produces:
+  - `Utf8Migration.Run(string dataDir) : MigrationResult` (`List<string> Converted`, `List<string> Failed`, 데이터 폴더 기준 상대 경로), `Utf8Migration.BackupFolder = "backup-cp949"`, `internal static bool IsValidUtf8(byte[])`
   - `AppPaths.DataDir : string` (get/set, set은 `Path.GetFullPath` 적용, 기본 `AppContext.BaseDirectory`)
   - `AppPaths.DataDirWithSlash : string` (`/` 구분자, 끝에 `/` 하나)
   - `interface IClipboard { void SetText(string text); }`, `PbcopyClipboard : IClipboard`
@@ -479,10 +477,10 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
 - [ ] **Step 1: Core 프로젝트 만들고 파일 옮기기**
 
 ```bash
-mkdir -p BandProgram.Core/Platform
+mkdir -p BandProgram.Core/Platform BandProgram.Core/Migration
 git mv BandProgram/ADB.cs BandProgram/APIDAO.cs BandProgram/AccountInfo.cs BandProgram/AppConfiguration.cs \
        BandProgram/Band.cs BandProgram/BandInfo.cs BandProgram/FunctionList.cs BandProgram/Global.cs \
-       BandProgram/ImageFile.cs BandProgram/LegacyText.cs BandProgram/Naver.cs BandProgram/NaverMobile.cs \
+       BandProgram/ImageFile.cs BandProgram/AppText.cs BandProgram/Naver.cs BandProgram/NaverMobile.cs \
        BandProgram/Post.cs BandProgram/Response.cs BandProgram/Util.cs BandProgram.Core/
 ```
 
@@ -559,7 +557,7 @@ public class SerialCollection
 }
 ```
 
-- [ ] **Step 4: 실패하는 테스트 작성 — AppPaths, LegacyText, 파싱 헬퍼, 포스팅 폴더, 플랫폼**
+- [ ] **Step 4: 실패하는 테스트 작성 — AppPaths, 인코딩, CP949 변환, 파싱 헬퍼, 포스팅 폴더, 플랫폼**
 
 `BandProgram.Tests/AppPathsTests.cs`:
 
@@ -594,7 +592,7 @@ public class AppPathsTests
 }
 ```
 
-`BandProgram.Tests/LegacyTextTests.cs`:
+`BandProgram.Tests/TextEncodingTests.cs`:
 
 ```csharp
 using System.Text;
@@ -602,22 +600,13 @@ using System.Text;
 namespace BandProgram.Tests;
 
 [Collection("Serial")]
-public class LegacyTextTests
+public class TextEncodingTests
 {
-    private static readonly byte[] Cp949Ga = { 0xB0, 0xA1 }; // "가"
-
     [Fact]
-    public void Encoding_is_cp949()
+    public void Util_reads_utf8_files()
     {
-        Assert.Equal(949, LegacyText.Encoding.CodePage);
-        Assert.Equal("가", LegacyText.Encoding.GetString(Cp949Ga));
-    }
-
-    [Fact]
-    public void Util_reads_existing_cp949_files_without_mojibake()
-    {
-        string file = Path.Combine(Path.GetTempPath(), $"band-legacy-{Guid.NewGuid():N}.txt");
-        File.WriteAllBytes(file, LegacyText.Encoding.GetBytes("12345\t캠핑 밴드\r\n67890\t낚시\r\n"));
+        string file = Path.Combine(Path.GetTempPath(), $"band-text-{Guid.NewGuid():N}.txt");
+        File.WriteAllBytes(file, Encoding.UTF8.GetBytes("12345\t캠핑 밴드\r\n67890\t낚시\r\n"));
         try
         {
             List<string> lines = Util.getInstance().readAll(file);
@@ -630,19 +619,150 @@ public class LegacyTextTests
     }
 
     [Fact]
-    public void Util_writes_cp949_so_the_old_windows_app_can_read_it()
+    public void Util_writes_utf8_without_bom()
     {
-        string file = Path.Combine(Path.GetTempPath(), $"band-legacy-{Guid.NewGuid():N}.txt");
+        string file = Path.Combine(Path.GetTempPath(), $"band-text-{Guid.NewGuid():N}.txt");
         try
         {
             Util.getInstance().writeStream(file, "가");
-            byte[] bytes = File.ReadAllBytes(file);
-            Assert.Equal(Cp949Ga.Concat(Encoding.ASCII.GetBytes(Environment.NewLine)).ToArray(), bytes);
+            byte[] expected = Encoding.UTF8.GetBytes("가" + Environment.NewLine); // EA B0 80, BOM 없음
+            Assert.Equal(expected, File.ReadAllBytes(file));
         }
         finally
         {
             File.Delete(file);
         }
+    }
+}
+```
+
+`BandProgram.Tests/Utf8MigrationTests.cs`:
+
+```csharp
+using System.Text;
+
+namespace BandProgram.Tests;
+
+public class Utf8MigrationTests : IDisposable
+{
+    private static readonly Encoding Cp949 = CreateCp949();
+    private readonly string root = Path.Combine(Path.GetTempPath(), $"band-migrate-{Guid.NewGuid():N}");
+
+    private static Encoding CreateCp949()
+    {
+        Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+        return Encoding.GetEncoding(949);
+    }
+
+    public Utf8MigrationTests()
+    {
+        Directory.CreateDirectory(root);
+    }
+
+    public void Dispose()
+    {
+        Directory.Delete(root, true);
+    }
+
+    private string Write(string relative, byte[] bytes)
+    {
+        string path = Path.Combine(root, relative);
+        Directory.CreateDirectory(Path.GetDirectoryName(path)!);
+        File.WriteAllBytes(path, bytes);
+        return path;
+    }
+
+    [Fact]
+    public void Converts_cp949_files_and_keeps_backup()
+    {
+        string bandList = Write("bandList.txt", Cp949.GetBytes("12345\t캠핑 밴드\r\n"));
+        string contents = Write(Path.Combine("AutoDoc", "Posting", "post_1", "contents.txt"), Cp949.GetBytes("=가나다콜=\r\n전국"));
+        byte[] originalContents = File.ReadAllBytes(contents);
+
+        MigrationResult result = Utf8Migration.Run(root);
+
+        Assert.Empty(result.Failed);
+        Assert.Equal(2, result.Converted.Count);
+        Assert.Contains("bandList.txt", result.Converted);
+        Assert.Equal(Encoding.UTF8.GetBytes("12345\t캠핑 밴드\r\n"), File.ReadAllBytes(bandList));
+        Assert.Equal(Encoding.UTF8.GetBytes("=가나다콜=\r\n전국"), File.ReadAllBytes(contents));
+
+        string backup = Path.Combine(root, Utf8Migration.BackupFolder, "AutoDoc", "Posting", "post_1", "contents.txt");
+        Assert.Equal(originalContents, File.ReadAllBytes(backup));
+    }
+
+    [Fact]
+    public void Leaves_utf8_and_ascii_files_untouched()
+    {
+        byte[] utf8 = Encoding.UTF8.GetBytes("이미 UTF-8");
+        byte[] ascii = Encoding.ASCII.GetBytes("plain text");
+        byte[] withBom = Encoding.UTF8.GetPreamble().Concat(Encoding.UTF8.GetBytes("BOM 있음")).ToArray();
+        string a = Write("bandAccount.txt", utf8);
+        string b = Write("acc.txt", ascii);
+        string c = Write(Path.Combine("AutoDoc", "Comment", "comment_1", "contents.txt"), withBom);
+
+        MigrationResult result = Utf8Migration.Run(root);
+
+        Assert.Empty(result.Converted);
+        Assert.Equal(utf8, File.ReadAllBytes(a));
+        Assert.Equal(ascii, File.ReadAllBytes(b));
+        Assert.Equal(withBom, File.ReadAllBytes(c));
+        Assert.False(Directory.Exists(Path.Combine(root, Utf8Migration.BackupFolder)));
+    }
+
+    [Fact]
+    public void Second_run_changes_nothing()
+    {
+        Write("bandList.txt", Cp949.GetBytes("낚시"));
+        Utf8Migration.Run(root);
+
+        MigrationResult second = Utf8Migration.Run(root);
+
+        Assert.Empty(second.Converted);
+        Assert.Empty(second.Failed);
+    }
+
+    [Fact]
+    public void Only_top_level_txt_and_AutoDoc_are_scanned()
+    {
+        byte[] cp949 = Cp949.GetBytes("건드리면 안 됨");
+        string profile = Write(Path.Combine("chromedata", "Default", "notes.txt"), cp949);
+        string backupDir = Write(Path.Combine(Utf8Migration.BackupFolder, "bandList.txt"), cp949);
+        string notText = Write("bandList.csv", cp949);
+
+        MigrationResult result = Utf8Migration.Run(root);
+
+        Assert.Empty(result.Converted);
+        Assert.Equal(cp949, File.ReadAllBytes(profile));
+        Assert.Equal(cp949, File.ReadAllBytes(backupDir));
+        Assert.Equal(cp949, File.ReadAllBytes(notText));
+    }
+
+    [Fact]
+    public void Existing_backup_is_not_overwritten()
+    {
+        byte[] first = Cp949.GetBytes("처음 원본");
+        Write(Path.Combine(Utf8Migration.BackupFolder, "bandList.txt"), first);
+        Write("bandList.txt", Cp949.GetBytes("나중 파일"));
+
+        Utf8Migration.Run(root);
+
+        Assert.Equal(first, File.ReadAllBytes(Path.Combine(root, Utf8Migration.BackupFolder, "bandList.txt")));
+    }
+
+    [Fact]
+    public void Missing_data_dir_returns_empty_result()
+    {
+        MigrationResult result = Utf8Migration.Run(Path.Combine(root, "missing"));
+        Assert.Empty(result.Converted);
+        Assert.Empty(result.Failed);
+    }
+
+    [Fact]
+    public void IsValidUtf8_rejects_cp949_korean()
+    {
+        Assert.False(Utf8Migration.IsValidUtf8(Cp949.GetBytes("가나다")));
+        Assert.True(Utf8Migration.IsValidUtf8(Encoding.UTF8.GetBytes("가나다")));
     }
 }
 ```
@@ -704,10 +824,10 @@ public class PostingFolderTests : IDisposable
         string post3 = Path.Combine(root, "AutoDoc", "Posting", "post_3");
         Directory.CreateDirectory(post1);
         Directory.CreateDirectory(post3);
-        File.WriteAllBytes(Path.Combine(post1, "contents.txt"), LegacyText.Encoding.GetBytes("=가나다콜=\r\n전국 어디서나"));
-        File.WriteAllBytes(Path.Combine(post1, "comment_contents.txt"), LegacyText.Encoding.GetBytes("댓글입니다"));
+        File.WriteAllText(Path.Combine(post1, "contents.txt"), "=가나다콜=\r\n전국 어디서나");
+        File.WriteAllText(Path.Combine(post1, "comment_contents.txt"), "댓글입니다");
         File.WriteAllBytes(Path.Combine(post1, "a.png"), new byte[] { 1, 2, 3 });
-        File.WriteAllBytes(Path.Combine(post3, "contents.txt"), LegacyText.Encoding.GetBytes("세번째"));
+        File.WriteAllText(Path.Combine(post3, "contents.txt"), "세번째");
 
         // 기존 코드는 폴더 목록은 현재 디렉터리 기준, 파일 내용은 실행 폴더(startPath) 기준으로 읽는다.
         Directory.SetCurrentDirectory(root);
@@ -722,7 +842,7 @@ public class PostingFolderTests : IDisposable
     }
 
     [Fact]
-    public void getPostingList_reads_cp949_contents_images_and_comment()
+    public void getPostingList_reads_contents_images_and_comment()
     {
         List<Post> posts = new FunctionList().getPostingList("AutoDoc/Posting", "post_");
 
@@ -802,9 +922,122 @@ public class PlatformTests
 - [ ] **Step 5: 테스트가 컴파일 실패하는지 확인**
 
 Run: `dotnet test BandProgram.Tests 2>&1 | grep -E " error " | sed -E 's/ \[.*\]//' | sort -u | head`
-Expected: `AppPaths`, `PbcopyClipboard`, `ADB.Executable`, `Util.Clipboard`를 찾을 수 없다는 오류와 Core의 WinForms 오류
+Expected: `AppPaths`, `PbcopyClipboard`, `ADB.Executable`, `Util.Clipboard`, `Utf8Migration`, `MigrationResult`를 찾을 수 없다는 오류와 Core의 WinForms 오류
 
-- [ ] **Step 6: 플랫폼 클래스 추가**
+- [ ] **Step 6: CP949 → UTF-8 변환 추가**
+
+`BandProgram.Core/Migration/Utf8Migration.cs`:
+
+```csharp
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text;
+
+namespace BandProgram
+{
+	public sealed class MigrationResult
+	{
+		public List<string> Converted { get; } = new List<string>();
+
+		public List<string> Failed { get; } = new List<string>();
+	}
+
+	// .NET Framework 버전은 텍스트 파일을 CP949(한국어 Windows의 Encoding.Default)로 저장했다.
+	// 프로그램 시작 시 데이터 폴더의 *.txt와 AutoDoc/**/*.txt 중 올바른 UTF-8이 아닌 파일을
+	// CP949로 보고 UTF-8(BOM 없음)로 바꾼다. 원본은 backup-cp949/에 같은 상대 경로로 남긴다.
+	public static class Utf8Migration
+	{
+		public const string BackupFolder = "backup-cp949";
+
+		private static readonly Encoding StrictUtf8 = new UTF8Encoding(false, true);
+
+		private static readonly Encoding Cp949 = CreateCp949();
+
+		public static MigrationResult Run(string dataDir)
+		{
+			MigrationResult result = new MigrationResult();
+			foreach (string file in FindTextFiles(dataDir))
+			{
+				string relative = Path.GetRelativePath(dataDir, file);
+				try
+				{
+					if (ConvertIfNeeded(dataDir, file, relative))
+					{
+						result.Converted.Add(relative);
+					}
+				}
+				catch (Exception ex)
+				{
+					result.Failed.Add(string.Concat(relative, ": ", ex.Message));
+				}
+			}
+			return result;
+		}
+
+		internal static bool IsValidUtf8(byte[] bytes)
+		{
+			try
+			{
+				StrictUtf8.GetString(bytes);
+				return true;
+			}
+			catch (DecoderFallbackException)
+			{
+				return false;
+			}
+		}
+
+		private static IEnumerable<string> FindTextFiles(string dataDir)
+		{
+			if (!Directory.Exists(dataDir))
+			{
+				return Enumerable.Empty<string>();
+			}
+			IEnumerable<string> files = Directory.GetFiles(dataDir, "*.txt", SearchOption.TopDirectoryOnly);
+			string autoDoc = Path.Combine(dataDir, "AutoDoc");
+			if (Directory.Exists(autoDoc))
+			{
+				files = files.Concat(Directory.GetFiles(autoDoc, "*.txt", SearchOption.AllDirectories));
+			}
+			return files;
+		}
+
+		private static bool ConvertIfNeeded(string dataDir, string file, string relative)
+		{
+			byte[] bytes = File.ReadAllBytes(file);
+			if (IsValidUtf8(bytes))
+			{
+				return false;
+			}
+
+			string backup = Path.Combine(dataDir, BackupFolder, relative);
+			Directory.CreateDirectory(Path.GetDirectoryName(backup));
+			if (!File.Exists(backup))
+			{
+				File.WriteAllBytes(backup, bytes); // 처음 원본만 보존
+			}
+
+			string temp = string.Concat(file, ".utf8tmp");
+			File.WriteAllText(temp, Cp949.GetString(bytes), AppText.Encoding);
+			File.Move(temp, file, true);
+			return true;
+		}
+
+		private static Encoding CreateCp949()
+		{
+			Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+			return Encoding.GetEncoding(949);
+		}
+	}
+}
+```
+
+Run: `dotnet test BandProgram.Tests --filter Utf8MigrationTests 2>&1 | grep -E " error " | grep -v "Utf8Migration\|MigrationResult" | head -3`
+Expected: 남은 오류는 Core의 WinForms 오류뿐(Step 7~8에서 해결). 변환 테스트 실행은 Step 11에서 한다.
+
+- [ ] **Step 6b: 플랫폼 클래스 추가**
 
 `BandProgram.Core/Platform/AppPaths.cs`:
 
@@ -1023,10 +1256,30 @@ namespace BandProgram
 sed -i '' 's/this\.fl\.showFileOpenDialog()/ImageFileDialog.Show()/g' BandProgram/NewPostForm.cs BandProgram/PostingAddForm.cs
 ```
 
-`BandProgram/Program.cs`의 `Main` 첫 줄에 추가:
+`BandProgram/Program.cs`의 `Main` 첫 부분에 추가한다(`using System.IO;` 필요). 변환은 어떤 파일도 읽기 전에 실행해야 한다.
 
 ```csharp
             Util.Clipboard = new WinFormsClipboard();
+
+            // .NET Framework 버전이 CP949로 저장한 파일을 UTF-8로 한 번 변환한다.
+            MigrationResult migration = Utf8Migration.Run(AppPaths.DataDir);
+            if (migration.Converted.Count > 0 || migration.Failed.Count > 0)
+            {
+                string log = Path.Combine(AppPaths.DataDir, "encoding-migration.log");
+                string stamp = DateTime.Now.ToString("yy-MM-dd HH:mm:ss");
+                foreach (string file in migration.Converted)
+                {
+                    File.AppendAllText(log, string.Concat(stamp, " 변환: ", file, Environment.NewLine));
+                }
+                foreach (string failure in migration.Failed)
+                {
+                    File.AppendAllText(log, string.Concat(stamp, " 실패: ", failure, Environment.NewLine));
+                }
+            }
+            if (migration.Failed.Count > 0)
+            {
+                MessageBox.Show("일부 텍스트 파일을 UTF-8로 바꾸지 못했습니다. encoding-migration.log를 확인해 주세요.");
+            }
 ```
 
 `BandProgram/BandLayout.cs` 생성자의 `entirePath` 줄을 바꾼다(기존과 같은 `.../path/sep` 형식).
@@ -1056,7 +1309,9 @@ git commit -m "Split automation logic into cross-platform BandProgram.Core
 
 Add AppPaths, IClipboard with pbcopy for macOS, OS-specific paste and adb
 names, move the image file dialog into the WinForms app, and add an xUnit
-project covering CP949 files, posting folders, and parsing helpers.
+project covering UTF-8 text files, posting folders, and parsing helpers.
+Convert CP949 text files left by the .NET Framework version to UTF-8 once
+at startup, keeping the originals in backup-cp949/.
 
 Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
 ```
@@ -2294,7 +2549,8 @@ internal sealed class DevShell
         return DevConfig.Load(path);
     }
 
-    // bandAccount.txt는 CP949이고 비밀번호는 Base64다(LoginSecond.buttonAdd_Click과 같은 형식).
+    // bandAccount.txt 형식: 아이디\t Base64(비밀번호)\t 유형 (LoginSecond.buttonAdd_Click과 같음).
+    // 비밀번호를 손으로 Base64로 바꾸기 번거로워서 추가 명령을 둔다.
     private void Account(ShellCommand cmd)
     {
         if (cmd.Args.Count >= 4 && cmd.Args[0] == "add")
@@ -2438,6 +2694,11 @@ internal static class Program
         SelectorTrace.SnapshotEnabled = true;
         SelectorTrace.Sink = line => DevShell.Log(line, ConsoleColor.Yellow);
 
+        // Windows에서 복사해 온 CP949 파일을 UTF-8로 바꾼다(고객 앱과 같은 처리).
+        MigrationResult migration = Utf8Migration.Run(dataDir);
+        foreach (string file in migration.Converted) Console.WriteLine($"UTF-8로 변환: {file}");
+        foreach (string failure in migration.Failed) Console.WriteLine($"변환 실패: {failure}");
+
         Console.WriteLine($"데이터 폴더: {dataDir}");
         Console.WriteLine("help 로 명령 목록을 볼 수 있어요.");
 
@@ -2460,7 +2721,7 @@ Expected: `오류 0개`
 
 Run:
 ```bash
-D=$(mktemp -d) && printf 'help\naccount add 01012345678 pw1234 전화번호\naccount\nsel .x\nfoo\nquit\n' | dotnet run --project BandProgram.Dev -- --data "$D" ; iconv -f cp949 -t utf-8 "$D/bandAccount.txt"
+D=$(mktemp -d) && printf 'help\naccount add 01012345678 pw1234 전화번호\naccount\nsel .x\nfoo\nquit\n' | dotnet run --project BandProgram.Dev -- --data "$D" ; cat "$D/bandAccount.txt"
 ```
 Expected: 도움말 출력, `추가됨: 01012345678 (전화번호)`, 계정 목록에 `01012345678 (전화번호)`, `sel`은 `브라우저가 없어요`, `foo`는 `알 수 없는 명령`, 마지막 줄 `01012345678	cHcxMjM0	전화번호`
 
@@ -2517,12 +2778,14 @@ Expected: 도움말 출력, `추가됨: 01012345678 (전화번호)`, 계정 목�
    mkdir -p devdata && cp devdata.example/dev.json devdata/
    ```
    `devdata/`는 git에 올라가지 않는다. 계정·쿠키·스냅샷이 여기에 쌓인다.
-3. 계정 추가(CP949로 저장되므로 텍스트 편집기 대신 셸 명령을 쓴다):
+3. 계정 추가. `bandAccount.txt`의 비밀번호는 Base64라서 셸 명령이 편하다:
    ```
    band> account add <아이디> <비밀번호> 전화번호
    ```
-4. 포스팅·댓글·채팅 원고는 `devdata/AutoDoc/Posting/post_1/contents.txt` 같은 구조로 둔다(CP949).
-   Windows에서 쓰던 `AutoDoc` 폴더를 그대로 복사해도 된다. 대상 밴드 목록은 `devdata/bandList.txt`.
+4. 포스팅·댓글·채팅 원고는 `devdata/AutoDoc/Posting/post_1/contents.txt` 같은 구조로 둔다.
+   모든 텍스트 파일은 UTF-8이라 VS Code에서 바로 편집하면 된다. 대상 밴드 목록은 `devdata/bandList.txt`.
+5. Windows에서 쓰던 `AutoDoc` 폴더나 `bandList.txt`를 복사해 와도 된다. CP949 파일은 Dev 셸을 켤 때
+   UTF-8로 바뀌고 원본은 `devdata/backup-cp949/`에 남는다.
 
 ## 실행
 
@@ -2671,14 +2934,15 @@ Expected: `완료: ...`, `BandProgram.exe`, `BandProgram.dll`, `BandProgram.Core
 # Windows 스모크 테스트
 
 맥에서 `scripts/publish-windows.sh`로 만든 `publish/win-x64` 폴더를 Windows PC로 복사해서 확인한다.
-기존 고객 데이터(`bandList.txt`, `bandAccount.txt`, `AutoDoc/`)를 같은 폴더에 함께 복사한다.
+구버전에서 쓰던 고객 데이터(`bandList.txt`, `bandAccount.txt`, `AutoDoc/`, CP949)를 같은 폴더에 함께 복사한다.
 .NET 런타임은 포함되어 있어 따로 설치하지 않는다.
 
 | # | 확인 | 기대 결과 | 결과 |
 |---|---|---|---|
 | 1 | `BandProgram.exe` 실행 | 로그인 창이 기존과 같은 글꼴·배치로 뜬다 | |
 | 2 | 라이선스 로그인 | 계정 선택 화면으로 넘어간다 | |
-| 3 | 계정 목록 | 기존 `bandAccount.txt`의 계정이 한글 유형(전화번호/이메일)과 함께 보인다 | |
+| 3 | 첫 실행 후 데이터 폴더 | `backup-cp949/`에 원본이, `encoding-migration.log`에 변환 목록이 생긴다. 다시 실행하면 로그가 늘지 않는다 | |
+| 3-1 | 계정 목록 | 기존 `bandAccount.txt`의 계정이 한글 유형(전화번호/이메일)과 함께 보인다 | |
 | 4 | 계정 목록 우클릭 → 선택된 항목 삭제 | 메뉴가 뜨고 삭제된다 | |
 | 5 | 계정 로그인 | Chrome이 열리고 로그인된다(chromedriver 자동 다운로드, 첫 실행은 느릴 수 있음) | |
 | 6 | 밴드 목록 불러오기 | 목록이 뜨고 한글 이름이 깨지지 않는다 | |
@@ -2690,7 +2954,7 @@ Expected: `완료: ...`, `BandProgram.exe`, `BandProgram.dll`, `BandProgram.Core
 | 12 | 포스팅 일시정지 상태에서 댓글 시작 → 댓글 진행 중 포스팅 재개 | 둘 다 진행된다 | |
 | 13 | 포스팅 초기화 | 작업이 멈추고 버튼이 대기 상태로 돌아간다. 다시 시작하면 처음부터 진행된다 | |
 | 14 | 가입 시작 → 일시정지 → 재개 → 초기화 | 각 단계가 기존처럼 동작한다 | |
-| 15 | 새로 저장한 원고를 메모장으로 열기 | 한글이 깨지지 않는다(CP949) | |
+| 15 | 원고를 메모장으로 열기 | 한글이 깨지지 않는다(UTF-8) | |
 | 16 | `selector-miss.log` | 실행 폴더에 생기고, 셀렉터 실패가 기록된다 | |
 | 17 | 계정 변경 버튼 / 창 닫기 | Chrome이 닫히고 프로그램이 정상 종료된다 | |
 ```
