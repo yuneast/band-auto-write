@@ -1,0 +1,9 @@
+{
+  // BandLayout.setOption 과 같은 값. type = 첫 번째 콤보박스 인덱스
+  "posting":  { "type": 0, "betweenWorkSec": 60, "reserved": false, "paste": true,
+                "reserveHour": 0, "reserveMin": 0, "repeatCount": 1, "repeatBetweenSec": 60 },
+  "comment":  { "type": 0, "betweenWorkSec": 60, "reserved": false, "paste": true,
+                "reserveHour": 0, "reserveMin": 0, "repeatCount": 1, "repeatBetweenSec": 60 },
+  "chatting": { "type": 0, "betweenWorkSec": 60, "reserved": false, "paste": true,
+                "reserveHour": 0, "reserveMin": 0, "repeatCount": 1, "repeatBetweenSec": 60 }
+}

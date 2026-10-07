@@ -1,0 +1,16 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Dev 셸",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build-dev",
+      "program": "${workspaceFolder}/BandProgram.Dev/bin/Debug/net10.0/BandProgram.Dev.dll",
+      "args": ["--data", "${workspaceFolder}/devdata"],
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal",
+      "stopAtEntry": false
+    }
+  ]
+}

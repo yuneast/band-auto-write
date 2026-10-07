@@ -1,0 +1,12 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "build-dev",
+      "type": "process",
+      "command": "dotnet",
+      "args": ["build", "${workspaceFolder}/BandProgram.Dev/BandProgram.Dev.csproj"],
+      "problemMatcher": "$msCompile"
+    }
+  ]
+}

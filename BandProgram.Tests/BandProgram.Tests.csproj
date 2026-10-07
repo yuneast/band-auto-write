@@ -21,6 +21,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\BandProgram.Core\BandProgram.Core.csproj" />
+    <ProjectReference Include="..\BandProgram.Dev\BandProgram.Dev.csproj" />
   </ItemGroup>
 
 </Project>
