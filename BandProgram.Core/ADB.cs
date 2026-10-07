@@ -9,6 +9,11 @@ namespace BandProgram
 	{
 		private static ADB instance;
 
+		internal static string Executable
+		{
+			get { return OperatingSystem.IsWindows() ? "adb.exe" : "adb"; }
+		}
+
 		private Process process;
 
 		private ProcessStartInfo startInfo;
@@ -29,7 +34,7 @@ namespace BandProgram
 			this.startInfo.WindowStyle = ProcessWindowStyle.Hidden;
 			this.startInfo.UseShellExecute = false;
 			this.startInfo.RedirectStandardOutput = true;
-			this.startInfo.FileName = "adb.exe";
+			this.startInfo.FileName = ADB.Executable;
 			this.startInfo.Arguments = command;
 			this.process.StartInfo.CreateNoWindow = true;
 			this.process.StartInfo = this.startInfo;

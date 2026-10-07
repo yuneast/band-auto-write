@@ -112,7 +112,7 @@ namespace BandProgram
             {
                 try
                 {
-                    ImageFile imageFile = this.fl.showFileOpenDialog();
+                    ImageFile imageFile = ImageFileDialog.Show();
                     if (imageFile != null)
                     {
                         this.imageFileList.Add(imageFile);

@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Windows.Forms;
 using System.Text.RegularExpressions;
 
 
@@ -14,7 +13,10 @@ namespace BandProgram
 	{
 		private Util util = Util.getInstance();
 
-		private string startPath = string.Concat(Application.StartupPath.Replace('\\', '/'), "/");
+		private string startPath
+		{
+			get { return AppPaths.DataDirWithSlash; }
+		}
 
 		public int post_type { get; set; }
 
@@ -280,7 +282,6 @@ namespace BandProgram
 			{
 				str = url.Split(new char[] { '?' }).First<string>().Split(new char[] { '/' }).Last<string>();
 				string str1 = string.Concat("https://band.us/band/", str);
-				MessageBox.Show(str1);
 				string str2 = this.util.requestHTTP(str1);
 				string str3 = this.util.split(str2, "<title>", "</title>").ElementAt<string>(0);
 				bandInfo = new BandInfo()
@@ -830,7 +831,7 @@ namespace BandProgram
 			return flag;
 		}
 
-		private string intListToString(List<int> list)
+		internal string intListToString(List<int> list)
 		{
 			string str = "";
 			if (list != null)
@@ -1300,25 +1301,6 @@ namespace BandProgram
 			this.post_reserveMin = reserveMin;
 			this.post_recCnt = recCnt;
 			this.post_recBetweenWork = recBetweenWork;
-		}
-
-		public ImageFile showFileOpenDialog()
-		{
-			OpenFileDialog openFileDialog = new OpenFileDialog()
-			{
-				Title = "이미지 파일 불러오기",
-				FileName = "",
-				Filter = "그림 파일 (*.jpg, *.jpeg, *.gif, *.bmp, *.png) | *.jpg; *.jpeg; *.gif; *.bmp; *.png;"
-			};
-			DialogResult dialogResult = openFileDialog.ShowDialog();
-			if (dialogResult != DialogResult.OK)
-			{
-				return null;
-			}
-			string safeFileName = openFileDialog.SafeFileName;
-			string fileName = openFileDialog.FileName;
-			string str = fileName.Replace(safeFileName, "");
-			return new ImageFile(safeFileName, str, (new FileInfo(fileName)).Length);
 		}
 
 		public string signupBand(BandInfo band, string nickName)
@@ -2343,7 +2325,7 @@ namespace BandProgram
 			return flag;
 		}
 
-		private List<int> stringToIntList(string str, char sep)
+		internal List<int> stringToIntList(string str, char sep)
 		{
 			if (str == null)
 			{

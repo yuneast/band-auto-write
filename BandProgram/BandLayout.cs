@@ -70,7 +70,7 @@ namespace BandProgram
 			this.isOperating = isOperating;
 			this.path = path;
 			this.sep = sep;
-			this.entirePath = string.Concat(new string[] { Application.StartupPath.Replace('\\', '/'), "/", path, "/", sep });
+			this.entirePath = string.Concat(new string[] { AppPaths.DataDirWithSlash, path, "/", sep });
 			this.prepareComboBox();
 			this.loadPostingList();
 		}

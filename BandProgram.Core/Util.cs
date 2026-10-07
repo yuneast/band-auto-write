@@ -13,7 +13,6 @@ using System.Net.Http;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
-using System.Windows.Forms;
 
 namespace BandProgram
 {
@@ -28,6 +27,9 @@ namespace BandProgram
 		private string leftDate;
 
 		private static Util instance;
+
+		// Windows는 WinForms Program이 WinFormsClipboard를 넣는다.
+		public static IClipboard Clipboard { get; set; } = OperatingSystem.IsMacOS() ? new PbcopyClipboard() : null;
 
 		private ChromeDriver driver;
 		IJavaScriptExecutor executor;
@@ -1036,15 +1038,22 @@ namespace BandProgram
 			bool flag;
 			try
 			{
-				Thread thread = new Thread(() => Clipboard.SetText(msg));
-				thread.SetApartmentState(ApartmentState.STA);
-				thread.Start();
-				thread.Join();
+				Util.Clipboard.SetText(msg);
 				this.delay(500);
-				this.findElement(css).SendKeys(string.Concat(OpenQA.Selenium.Keys.LeftControl, "v"));
-				this.delay(100);
-				this.findElement(css).SendKeys(OpenQA.Selenium.Keys.LeftControl);
-				this.delay(100);
+				if (OperatingSystem.IsMacOS())
+				{
+					IWebElement element = this.findElement(css);
+					((IJavaScriptExecutor)this.driver).ExecuteScript("arguments[0].focus();", new object[] { element });
+					new Actions(this.driver).KeyDown(OpenQA.Selenium.Keys.Command).SendKeys("v").KeyUp(OpenQA.Selenium.Keys.Command).Perform();
+					this.delay(100);
+				}
+				else
+				{
+					this.findElement(css).SendKeys(string.Concat(OpenQA.Selenium.Keys.LeftControl, "v"));
+					this.delay(100);
+					this.findElement(css).SendKeys(OpenQA.Selenium.Keys.LeftControl);
+					this.delay(100);
+				}
 				flag = true;
 			}
 			catch
@@ -1117,10 +1126,10 @@ namespace BandProgram
 				chromeDriverService.HideCommandPromptWindow = true;
 				chromeOption.AddArgument("window-postion=100,0");
 				chromeOption.AddArgument("window-size=1050,720");
-                chromeOption.AddArgument(@"user-data-dir="+Application.StartupPath+"\\chromedata");
+                chromeOption.AddArgument("user-data-dir=" + Path.Combine(AppPaths.DataDir, "chromedata"));
                 //chromeOption.AddArgument("incognito");
                 chromeOption.AddArgument("disable-gpu");
-				chromeOption.AddArgument("--disk-cache-dir=Cache\\");
+				chromeOption.AddArgument("--disk-cache-dir=" + Path.Combine(AppPaths.DataDir, "Cache"));
 				this.driver = new ChromeDriver(chromeDriverService, chromeOption);
 				this.driver.Manage().Timeouts().PageLoad = new TimeSpan(0, 0, 3, 0);
 				chromeDriver = this.driver;
