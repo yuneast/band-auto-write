@@ -123,4 +123,42 @@ public class Utf8MigrationTests : IDisposable
         Assert.False(Utf8Migration.IsValidUtf8(Cp949.GetBytes("가나다")));
         Assert.True(Utf8Migration.IsValidUtf8(Encoding.UTF8.GetBytes("가나다")));
     }
+
+    [Fact]
+    public void Utf16_bom_file_is_left_untouched_without_backup()
+    {
+        byte[] utf16 = Encoding.Unicode.GetPreamble().Concat(Encoding.Unicode.GetBytes("유니코드")).ToArray();
+        string path = Write(Path.Combine("AutoDoc", "Posting", "post_1", "contents.txt"), utf16);
+
+        MigrationResult result = Utf8Migration.Run(root);
+
+        Assert.Empty(result.Converted);
+        Assert.Empty(result.Failed);
+        Assert.Equal(utf16, File.ReadAllBytes(path));
+        Assert.False(Directory.Exists(Path.Combine(root, Utf8Migration.BackupFolder)));
+    }
+
+    [Fact]
+    public void Inaccessible_folder_does_not_throw_and_other_files_still_convert()
+    {
+        if (OperatingSystem.IsWindows())
+        {
+            return;
+        }
+        Write(Path.Combine("AutoDoc", "locked", "contents.txt"), Cp949.GetBytes("잠긴 폴더"));
+        string bandList = Write("bandList.txt", Cp949.GetBytes("12345\t낚시"));
+        string locked = Path.Combine(root, "AutoDoc", "locked");
+        File.SetUnixFileMode(locked, UnixFileMode.None);
+        try
+        {
+            MigrationResult result = Utf8Migration.Run(root);
+
+            Assert.Contains("bandList.txt", result.Converted);
+            Assert.Equal(Encoding.UTF8.GetBytes("12345\t낚시"), File.ReadAllBytes(bandList));
+        }
+        finally
+        {
+            File.SetUnixFileMode(locked, UnixFileMode.UserRead | UnixFileMode.UserWrite | UnixFileMode.UserExecute);
+        }
+    }
 }

@@ -27,7 +27,8 @@ namespace BandProgram
 		public static MigrationResult Run(string dataDir)
 		{
 			MigrationResult result = new MigrationResult();
-			foreach (string file in FindTextFiles(dataDir))
+			List<string> files = FindTextFiles(dataDir, result);
+			foreach (string file in files)
 			{
 				string relative = Path.GetRelativePath(dataDir, file);
 				try
@@ -58,17 +59,27 @@ namespace BandProgram
 			}
 		}
 
-		private static IEnumerable<string> FindTextFiles(string dataDir)
+		private static List<string> FindTextFiles(string dataDir, MigrationResult result)
 		{
-			if (!Directory.Exists(dataDir))
+			List<string> files = new List<string>();
+			try
 			{
-				return Enumerable.Empty<string>();
+				if (!Directory.Exists(dataDir))
+				{
+					return files;
+				}
+				EnumerationOptions top = new EnumerationOptions { IgnoreInaccessible = true };
+				files.AddRange(Directory.GetFiles(dataDir, "*.txt", top));
+				string autoDoc = Path.Combine(dataDir, "AutoDoc");
+				if (Directory.Exists(autoDoc))
+				{
+					EnumerationOptions deep = new EnumerationOptions { IgnoreInaccessible = true, RecurseSubdirectories = true };
+					files.AddRange(Directory.GetFiles(autoDoc, "*.txt", deep));
+				}
 			}
-			IEnumerable<string> files = Directory.GetFiles(dataDir, "*.txt", SearchOption.TopDirectoryOnly);
-			string autoDoc = Path.Combine(dataDir, "AutoDoc");
-			if (Directory.Exists(autoDoc))
+			catch (Exception ex)
 			{
-				files = files.Concat(Directory.GetFiles(autoDoc, "*.txt", SearchOption.AllDirectories));
+				result.Failed.Add(string.Concat("(목록) : ", ex.Message));
 			}
 			return files;
 		}
@@ -76,7 +87,7 @@ namespace BandProgram
 		private static bool ConvertIfNeeded(string dataDir, string file, string relative)
 		{
 			byte[] bytes = File.ReadAllBytes(file);
-			if (IsValidUtf8(bytes))
+			if (HasUtf16Or32Bom(bytes) || IsValidUtf8(bytes))
 			{
 				return false;
 			}
@@ -92,6 +103,12 @@ namespace BandProgram
 			File.WriteAllText(temp, Cp949.GetString(bytes), AppText.Encoding);
 			File.Move(temp, file, true);
 			return true;
+		}
+
+		// UTF-16/UTF-32 BOM(FF FE, FE FF)이 있는 파일은 StreamReader가 읽을 수 있으므로 건드리지 않는다.
+		private static bool HasUtf16Or32Bom(byte[] bytes)
+		{
+			return bytes.Length >= 2 && ((bytes[0] == 0xFF && bytes[1] == 0xFE) || (bytes[0] == 0xFE && bytes[1] == 0xFF));
 		}
 
 		private static Encoding CreateCp949()

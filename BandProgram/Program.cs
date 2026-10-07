@@ -22,6 +22,8 @@ namespace BandProgram
             Application.SetDefaultFont(new Font("Microsoft Sans Serif", 8.25f));
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
+            // 상대 경로 파일(bandList.txt, AutoDoc/...)이 마이그레이션이 변환한 폴더와 같은 곳을 가리키게 한다.
+            Directory.SetCurrentDirectory(AppPaths.DataDir);
             Util.Clipboard = new WinFormsClipboard();
             SelectorTrace.Sink = line =>
             {
@@ -37,18 +39,25 @@ namespace BandProgram
 
             // .NET Framework 버전이 CP949로 저장한 파일을 UTF-8로 한 번 변환한다.
             MigrationResult migration = Utf8Migration.Run(AppPaths.DataDir);
-            if (migration.Converted.Count > 0 || migration.Failed.Count > 0)
+            try
             {
-                string log = Path.Combine(AppPaths.DataDir, "encoding-migration.log");
-                string stamp = DateTime.Now.ToString("yy-MM-dd HH:mm:ss");
-                foreach (string file in migration.Converted)
+                if (migration.Converted.Count > 0 || migration.Failed.Count > 0)
                 {
-                    File.AppendAllText(log, string.Concat(stamp, " 변환: ", file, Environment.NewLine));
+                    string log = Path.Combine(AppPaths.DataDir, "encoding-migration.log");
+                    string stamp = DateTime.Now.ToString("yy-MM-dd HH:mm:ss");
+                    foreach (string file in migration.Converted)
+                    {
+                        File.AppendAllText(log, string.Concat(stamp, " 변환: ", file, Environment.NewLine));
+                    }
+                    foreach (string failure in migration.Failed)
+                    {
+                        File.AppendAllText(log, string.Concat(stamp, " 실패: ", failure, Environment.NewLine));
+                    }
                 }
-                foreach (string failure in migration.Failed)
-                {
-                    File.AppendAllText(log, string.Concat(stamp, " 실패: ", failure, Environment.NewLine));
-                }
+            }
+            catch
+            {
+                // 로그를 못 써도 프로그램은 시작해야 한다.
             }
             if (migration.Failed.Count > 0)
             {

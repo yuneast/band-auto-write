@@ -17,6 +17,8 @@ namespace BandProgram
 
 		internal static Func<DateTime> Now = () => DateTime.Now;
 
+		internal static readonly TimeSpan DedupeWindow = TimeSpan.FromSeconds(60);
+
 		private static readonly object sync = new object();
 
 		private static readonly Dictionary<string, DateTime> lastLogged = new Dictionary<string, DateTime>();
@@ -36,7 +38,7 @@ namespace BandProgram
 				lock (sync)
 				{
 					DateTime last;
-					if (lastLogged.TryGetValue(key, out last) && now - last < TimeSpan.FromSeconds(1))
+					if (lastLogged.TryGetValue(key, out last) && now - last < DedupeWindow)
 					{
 						return;
 					}

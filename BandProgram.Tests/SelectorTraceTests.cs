@@ -50,14 +50,16 @@ public class SelectorTraceTests : IDisposable
     }
 
     [Fact]
-    public void Same_location_within_one_second_is_logged_once()
+    public void Same_location_within_dedupe_window_is_logged_once()
     {
         LookUpMissingElement();
-        now = now.AddMilliseconds(500);
+        now = now.AddMilliseconds(1100);
+        LookUpMissingElement();
+        now = now.AddSeconds(30);
         LookUpMissingElement();
         Assert.Single(lines);
 
-        now = now.AddMilliseconds(600);
+        now = now.AddSeconds(61);
         LookUpMissingElement();
         Assert.Equal(2, lines.Count);
     }
