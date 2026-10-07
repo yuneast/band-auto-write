@@ -468,7 +468,7 @@ namespace BandProgram
         {
             try
             {
-                switch (((MenuItem)obj).Index)
+                switch (LegacyMenu.IndexOf(obj))
                 {
                     case 0:
                         {
@@ -538,8 +538,7 @@ namespace BandProgram
             if (e.Button == System.Windows.Forms.MouseButtons.Right)
             {
                 EventHandler eventHandler = new EventHandler(this.MenuClick);
-                MenuItem[] menuItem = new MenuItem[] { new MenuItem("선택된 항목 삭제하기", eventHandler), new MenuItem("-", eventHandler), new MenuItem("현재 리스트를 파일로 저장하기", eventHandler), new MenuItem("파일로 저장된 리스트 불러오기", eventHandler), new MenuItem("-", eventHandler), new MenuItem("선택된 항목 포스트 번호 일괄 수정하기", eventHandler), new MenuItem("서버에서 가입된 밴드 리스트 불러오기", eventHandler), new MenuItem("-", eventHandler), new MenuItem("모든 항목 선택하기", eventHandler), new MenuItem("모든 항목 선택 해제하기", eventHandler) };
-                this.listView1.ContextMenu = new System.Windows.Forms.ContextMenu(menuItem);
+                this.listView1.ContextMenuStrip = LegacyMenu.Create(eventHandler, "선택된 항목 삭제하기", "-", "현재 리스트를 파일로 저장하기", "파일로 저장된 리스트 불러오기", "-", "선택된 항목 포스트 번호 일괄 수정하기", "서버에서 가입된 밴드 리스트 불러오기", "-", "모든 항목 선택하기", "모든 항목 선택 해제하기");
             }
         }
         private void signupBand()

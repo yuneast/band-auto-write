@@ -209,8 +209,7 @@ namespace BandProgram
 			if (e.Button == MouseButtons.Right)
 			{
 				EventHandler eventHandler = new EventHandler(this.MenuClick);
-				MenuItem[] menuItem = new MenuItem[] { new MenuItem("항목 추가하기", eventHandler), new MenuItem("선택된 항목 삭제하기", eventHandler) };
-				this.postingListView.ContextMenu = new ContextMenu(menuItem);
+				this.postingListView.ContextMenuStrip = LegacyMenu.Create(eventHandler, "항목 추가하기", "선택된 항목 삭제하기");
 			}
 		}
 
@@ -262,7 +261,7 @@ namespace BandProgram
 		{
 			try
 			{
-				int index = ((MenuItem)obj).Index;
+				int index = LegacyMenu.IndexOf(obj);
 				if (index == 0)
 				{
 					this.addPosting();

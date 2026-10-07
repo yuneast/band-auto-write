@@ -128,7 +128,7 @@ namespace BandProgram
         {
             try
             {
-                int index = ((MenuItem)obj).Index;
+                int index = LegacyMenu.IndexOf(obj);
                 if (index == 0)
                 {
                     this.imageFileList.Clear();
@@ -151,20 +151,20 @@ namespace BandProgram
         {
             if (!this.radioImageOpen.Checked)
             {
-                Process.Start(Path.GetDirectoryName(this.imageFileList[this.ImageListView.FocusedItem.Index].getPath()));
+                ShellOpen.Open(Path.GetDirectoryName(this.imageFileList[this.ImageListView.FocusedItem.Index].getPath()));
             }
             else
             {
                 string str = string.Concat(this.imageFileList[this.ImageListView.FocusedItem.Index].getPath(), this.imageFileList[this.ImageListView.FocusedItem.Index].getFileName());
                 try
                 {
-                    Process.Start(str);
+                    ShellOpen.Open(str);
                 }
                 catch
                 {
                     try
                     {
-                        Process.Start(string.Concat(string.Concat(Application.StartupPath.Replace('\\', '/'), "/"), str));
+                        ShellOpen.Open(string.Concat(string.Concat(Application.StartupPath.Replace('\\', '/'), "/"), str));
                     }
                     catch
                     {
@@ -178,8 +178,7 @@ namespace BandProgram
             if (e.Button == System.Windows.Forms.MouseButtons.Right)
             {
                 EventHandler eventHandler = new EventHandler(this.MenuClick);
-                MenuItem[] menuItem = new MenuItem[] { new MenuItem("전체 사진 삭제", eventHandler), new MenuItem("선택한 사진 삭제", eventHandler) };
-                this.ImageListView.ContextMenu = new System.Windows.Forms.ContextMenu(menuItem);
+                this.ImageListView.ContextMenuStrip = LegacyMenu.Create(eventHandler, "전체 사진 삭제", "선택한 사진 삭제");
             }
         }
 

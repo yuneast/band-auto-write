@@ -9,12 +9,11 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
-using WinHttp;
 
 namespace BandProgram
 {
@@ -34,6 +33,8 @@ namespace BandProgram
 		IJavaScriptExecutor executor;
 
 		private Random rd = new Random();
+
+		private static readonly HttpClient http = new HttpClient();
 
 		public Util()
 		{
@@ -285,7 +286,7 @@ namespace BandProgram
 		public void createNotePad(string fileName)
 		{
 			FileStream fileStream = new FileStream(fileName, FileMode.Create, FileAccess.Write);
-			StreamWriter streamWriter = new StreamWriter(fileStream, Encoding.Default);
+			StreamWriter streamWriter = new StreamWriter(fileStream, AppText.Encoding);
 			streamWriter.Flush();
 			streamWriter.Close();
 			fileStream.Close();
@@ -437,7 +438,7 @@ namespace BandProgram
 		{
 			List<string> strs = this.readAll(fileName);
 			FileStream fileStream = new FileStream(fileName, FileMode.Create, FileAccess.Write);
-			StreamWriter streamWriter = new StreamWriter(fileStream, Encoding.Default);
+			StreamWriter streamWriter = new StreamWriter(fileStream, AppText.Encoding);
 			int num = strs.Count<string>();
 			for (int i = 1; i < num; i++)
 			{
@@ -707,7 +708,7 @@ namespace BandProgram
 			try
 			{
 				string str1 = "";
-				StreamReader streamReader = new StreamReader(fileName, Encoding.Default);
+				StreamReader streamReader = new StreamReader(fileName, AppText.Encoding);
 				str1 = streamReader.ReadLine();
 				streamReader.Close();
 				str = str1;
@@ -726,7 +727,7 @@ namespace BandProgram
 			{
 				List<string> strs1 = new List<string>();
 				string str = "";
-				StreamReader streamReader = new StreamReader(fileName, Encoding.Default);
+				StreamReader streamReader = new StreamReader(fileName, AppText.Encoding);
 				while (str != null)
 				{
 					str = streamReader.ReadLine();
@@ -753,7 +754,7 @@ namespace BandProgram
 			{
 				string str1 = "";
 				string str2 = "";
-				StreamReader streamReader = new StreamReader(fileName, Encoding.Default);
+				StreamReader streamReader = new StreamReader(fileName, AppText.Encoding);
 				while (str2 != null)
 				{
 					str2 = streamReader.ReadLine();
@@ -794,11 +795,10 @@ namespace BandProgram
 
 		public string requestHTTP(string url)
 		{
-			WinHttpRequest variable = (WinHttpRequest)Activator.CreateInstance(Marshal.GetTypeFromCLSID(new Guid("2087C2F4-2CEF-4953-A8AB-66779B670495")));
-			variable.Open("GET", url, Type.Missing);
-			variable.Send("");
-			variable.WaitForResponse(Type.Missing);
-			return variable.ResponseText;
+			using (HttpResponseMessage response = http.GetAsync(url).GetAwaiter().GetResult())
+			{
+				return response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+			}
 		}
 
 		public string requestHTTP(string url, Dictionary<string, string> parameters)
@@ -817,11 +817,7 @@ namespace BandProgram
 					flag = false;
 				}
 			}
-			WinHttpRequest variable = (WinHttpRequest)Activator.CreateInstance(Marshal.GetTypeFromCLSID(new Guid("2087C2F4-2CEF-4953-A8AB-66779B670495")));
-			variable.Open("GET", string.Concat(url, "?", str), Type.Missing);
-			variable.Send("");
-			variable.WaitForResponse(Type.Missing);
-			return variable.ResponseText;
+			return this.requestHTTP(string.Concat(url, "?", str));
 		}
 
 		public bool scrollDown(double minPer, double maxPer, int sleepMinMS, int sleepMaxMS)
@@ -1160,7 +1156,7 @@ namespace BandProgram
 		public void writeStream(string fileName, string str)
 		{
 			FileStream fileStream = new FileStream(fileName, FileMode.Append, FileAccess.Write);
-			StreamWriter streamWriter = new StreamWriter(fileStream, Encoding.Default);
+			StreamWriter streamWriter = new StreamWriter(fileStream, AppText.Encoding);
 			streamWriter.WriteLine(str);
 			streamWriter.Flush();
 			streamWriter.Close();
