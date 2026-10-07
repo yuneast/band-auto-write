@@ -21,8 +21,4 @@
     <ProjectReference Include="..\BandProgram.Core\BandProgram.Core.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Content Include="chromedriver.exe" CopyToOutputDirectory="PreserveNewest" />
-  </ItemGroup>
-
 </Project>
