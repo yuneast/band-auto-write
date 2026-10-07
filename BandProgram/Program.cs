@@ -23,6 +23,17 @@ namespace BandProgram
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Util.Clipboard = new WinFormsClipboard();
+            SelectorTrace.Sink = line =>
+            {
+                try
+                {
+                    File.AppendAllText(Path.Combine(AppPaths.DataDir, "selector-miss.log"),
+                        string.Concat(DateTime.Now.ToString("yy-MM-dd HH:mm:ss"), " ", line, Environment.NewLine));
+                }
+                catch
+                {
+                }
+            };
 
             // .NET Framework 버전이 CP949로 저장한 파일을 UTF-8로 한 번 변환한다.
             MigrationResult migration = Utf8Migration.Run(AppPaths.DataDir);

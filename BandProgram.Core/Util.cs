@@ -392,6 +392,7 @@ namespace BandProgram
 			catch
 			{
 				webElement = null;
+				SelectorTrace.Miss(str, this.driver);
 			}
 			return webElement;
 		}
@@ -406,18 +407,29 @@ namespace BandProgram
 			catch
 			{
 				webElement = null;
+				SelectorTrace.Miss(str, this.driver);
 			}
 			return webElement;
 		}
 
 		public IReadOnlyCollection<IWebElement> findElements(string str)
 		{
-			return this.driver.FindElements(By.CssSelector(str));
+			IReadOnlyCollection<IWebElement> webElements = this.driver.FindElements(By.CssSelector(str));
+			if (webElements.Count == 0)
+			{
+				SelectorTrace.Miss(str, this.driver);
+			}
+			return webElements;
 		}
 
 		public IReadOnlyCollection<IWebElement> findElementsWithXPath(string str)
 		{
-			return this.driver.FindElements(By.XPath(str));
+			IReadOnlyCollection<IWebElement> webElements = this.driver.FindElements(By.XPath(str));
+			if (webElements.Count == 0)
+			{
+				SelectorTrace.Miss(str, this.driver);
+			}
+			return webElements;
 		}
 
 		public IWebElement findElementByID(string str)
