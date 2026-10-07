@@ -83,6 +83,9 @@ public class WorkControlTests
         control.Reset();
         Assert.False(control.IsPaused);
         Assert.True(IsFrozen(counter));
+
+        control.Resume();
+        Assert.True(IsFrozen(counter));
     }
 
     [Fact]
@@ -126,19 +129,19 @@ public class WorkControlTests
     public void Pause_inside_long_delay_stops_promptly()
     {
         var control = new WorkControl();
-        bool finished = false;
+        int finished = 0;
         control.Start(() =>
         {
             Util.getInstance().delay(600);
-            finished = true;
+            Volatile.Write(ref finished, 1);
         });
         Thread.Sleep(50);
         control.Pause();
         Thread.Sleep(1000); // delay(600)이 끝났을 시간
-        Assert.False(finished);
+        Assert.Equal(0, Volatile.Read(ref finished));
 
         control.Resume();
-        WaitUntil(() => finished);
+        WaitUntil(() => Volatile.Read(ref finished) == 1);
         control.Reset();
     }
 

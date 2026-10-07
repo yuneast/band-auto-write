@@ -547,6 +547,7 @@ namespace BandProgram
             {
                 this.signupBandMain();
             }
+            WorkControl.Checkpoint();
             this.toggleToBandSign(true, true);
         }
         private void signupBandMain()
@@ -621,8 +622,9 @@ namespace BandProgram
         }
         private void button15_Click(object sender, EventArgs e)
         {
-            if (this.thSignup == null || !this.signupPaused)
+            if (this.thSignup == null || !this.signupPaused || !this.thSignup.IsAlive)
             {
+                this.signupPaused = false;
                 this.printLog(string.Concat(this.userid, " -> 가입 작업 시작"));
                 this.thSignup = this.signupWork.Start(this.signupBand);
             }

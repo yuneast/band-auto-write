@@ -81,6 +81,7 @@ namespace BandProgram
 			{
 				if (gen != Volatile.Read(ref this.generation))
 				{
+					// Init마다 백그라운드 스레드 하나가 프로세스 종료까지 남는다(스펙에서 허용).
 					Thread.Sleep(Timeout.Infinite);
 				}
 				this.gate.Wait();

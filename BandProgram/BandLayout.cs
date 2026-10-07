@@ -168,8 +168,9 @@ namespace BandProgram
 		private void btnStart_Click(object sender, EventArgs e)
 		{
             //Julian 포스팅작업시작
-			if (this.thPosting == null || !this.isPaused)
+			if (this.thPosting == null || !this.isPaused || !this.thPosting.IsAlive)
 			{
+				this.isPaused = false;
 				if (this.type == 0)
 				{
 					this.printLog(string.Concat(this.id, " -> 포스팅 작업 시작"));
@@ -503,6 +504,7 @@ namespace BandProgram
 			{
 				this.fl.startChatting(new FunctionList.Del_PrintLog(this.printLogMsg), new FunctionList.Del_PrintLogLeft(this.printLogLeftMsg));
 			}
+			WorkControl.Checkpoint();
 			this.refresh();
 			this.toggleState(true, true);
 		}
