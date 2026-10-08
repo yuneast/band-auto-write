@@ -639,22 +639,23 @@ namespace BandProgram
 			this.delay(SleepTime * 1000);
 		}
 
+		// 요소 안의 임의 지점(왼쪽 위에서 너비·높이의 40~70%)을 MoveToElement 오프셋으로 돌려준다.
+		// Selenium 4부터 오프셋이 요소 중앙 기준이라(Selenium 3은 왼쪽 위 기준) 중앙 기준으로 바꾼다.
+		internal static Point RandomPointerOffset(Size size, Random random)
+		{
+			int fromLeft = random.Next((int)(size.Width * 0.4), (int)(size.Width * 0.7));
+			int fromTop = random.Next((int)(size.Height * 0.4), (int)(size.Height * 0.7));
+			return new Point(fromLeft - size.Width / 2, fromTop - size.Height / 2);
+		}
+
 		private bool randomClick(IWebElement element, int sleepTimeMS, int rec_cnt = 1)
 		{
 			bool flag;
 			try
 			{
 				Actions action = new Actions(this.driver);
-				Random random = new Random();
-				Size size = element.Size;
-				int width = (int)((double)size.Width * 0.4);
-				size = element.Size;
-				int height = (int)((double)size.Height * 0.4);
-				size = element.Size;
-				int num = (int)((double)size.Width * 0.7);
-				size = element.Size;
-				int height1 = (int)((double)size.Height * 0.7);
-				action.MoveToElement(element, random.Next(width, num), random.Next(height, height1));
+				Point offset = Util.RandomPointerOffset(element.Size, new Random());
+				action.MoveToElement(element, offset.X, offset.Y);
 				action.Click();
 				action.Build();
 				for (int i = 0; i < rec_cnt; i++)
@@ -679,16 +680,8 @@ namespace BandProgram
 				((IJavaScriptExecutor)this.driver).ExecuteScript("arguments[0].scrollIntoView();", new object[] { element });
 				this.delay(500);
 				Actions action = new Actions(this.driver);
-				Random random = new Random();
-				Size size = element.Size;
-				int width = (int)((double)size.Width * 0.4);
-				size = element.Size;
-				int height = (int)((double)size.Height * 0.4);
-				size = element.Size;
-				int num = (int)((double)size.Width * 0.7);
-				size = element.Size;
-				int height1 = (int)((double)size.Height * 0.7);
-				action.MoveToElement(element, random.Next(width, num), random.Next(height, height1));
+				Point offset = Util.RandomPointerOffset(element.Size, new Random());
+				action.MoveToElement(element, offset.X, offset.Y);
 				action.Build();
 				action.Perform();
 				this.delay(sleepTimeMS);
