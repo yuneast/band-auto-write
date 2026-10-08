@@ -1,8 +1,12 @@
 # Windows 스모크 테스트
 
-맥에서 `scripts/publish-windows.sh`로 만든 `publish/win-x64` 폴더를 Windows PC로 복사해서 확인한다.
+맥에서 `scripts/publish-windows.sh`로 만든 `publish/win-x64`의 두 파일(`BandProgram.exe`, `selenium-manager.exe`)을
+Windows PC의 한 폴더에 복사해서 확인한다. `BandProgram.exe`는 .NET 런타임을 포함한 단일 파일이라 따로 설치할 것이 없다.
+`selenium-manager.exe`는 Chrome 드라이버를 받는 데 쓰이므로 반드시 exe 옆에 둔다.
+
 구버전에서 쓰던 고객 데이터(`bandList.txt`, `bandAccount.txt`, `AutoDoc/`, CP949)를 같은 폴더에 함께 복사한다.
-.NET 런타임은 포함되어 있어 따로 설치하지 않는다.
+구버전 폴더에 덮어쓰는 방식으로 업데이트할 때는 옛 `chromedriver.exe`(91 버전)를 지운다.
+옛 `WebDriver.dll`, `Newtonsoft.Json.dll`, `BandProgram.exe.config` 등은 남아 있어도 쓰이지 않는다.
 
 | # | 확인 | 기대 결과 | 결과 |
 |---|---|---|---|
@@ -12,6 +16,7 @@
 | 3-1 | 계정 목록 | 기존 `bandAccount.txt`의 계정이 한글 유형(전화번호/이메일)과 함께 보인다 | |
 | 4 | 계정 목록 우클릭 → 선택된 항목 삭제 | 메뉴가 뜨고 삭제된다 | |
 | 5 | 계정 로그인 | Chrome이 열리고 로그인된다(chromedriver 자동 다운로드, 첫 실행은 느릴 수 있음) | |
+| 5-1 | `selenium-manager.exe` 없이 실행 | Chrome이 뜨지 않는다(배포 시 함께 줘야 함을 확인) | |
 | 6 | 밴드 목록 불러오기 | 목록이 뜨고 한글 이름이 깨지지 않는다 | |
 | 7 | 밴드 목록 우클릭 메뉴 10개 항목 | 모든 항목이 기존처럼 동작한다(구분선 포함 위치) | |
 | 8 | 포스팅 원고 추가 → 이미지 추가 → 저장 | 파일 선택 창이 뜨고, 저장 후 목록에 보인다 | |
