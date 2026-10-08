@@ -35,6 +35,8 @@ public class UpdateManifestTests
     [InlineData("""{ "version": "1.0", "url": "relative/a.zip", "sha256": "3062ec4b294ca2304143eb21021ba202b1ec064e861cc1cb9fd45bb8be399cec" }""")]
     [InlineData("""{ "version": "1.0", "url": "http://x/a.zip", "sha256": "1234" }""")]
     [InlineData("""{ "version": "1.0", "url": "http://x/a.zip", "sha256": "zz62ec4b294ca2304143eb21021ba202b1ec064e861cc1cb9fd45bb8be399cec" }""")]
+    [InlineData("{ \"version\": \"1.0\", \"url\": \"http://x/a.zip\", \"sha256\": \"3062ec4b294ca2304143eb21021ba202b1ec064e861cc1cb9fd45bb8be399ce\\nc\" }")]
+    [InlineData("""{ "version": "1.0", "url": "http:///a.zip", "sha256": "3062ec4b294ca2304143eb21021ba202b1ec064e861cc1cb9fd45bb8be399cec" }""")]
     public void Rejects_invalid_manifest(string json)
     {
         Assert.False(Parse(json, out var m, out var error));

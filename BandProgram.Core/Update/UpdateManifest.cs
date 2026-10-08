@@ -7,7 +7,7 @@ namespace BandProgram
 	// 서버의 version.json. 서명 검증을 통과한 바이트만 해석한다.
 	public sealed class UpdateManifest
 	{
-		private static readonly Regex Sha256Pattern = new Regex("^[0-9a-f]{64}$");
+		private static readonly Regex Sha256Pattern = new Regex("^[0-9a-f]{64}\\z");
 
 		public Version Version { get; private set; }
 
@@ -37,7 +37,8 @@ namespace BandProgram
 					Uri url;
 					if (!TryGetString(root, "url", out string urlText)
 						|| !Uri.TryCreate(urlText, UriKind.Absolute, out url)
-						|| (url.Scheme != Uri.UriSchemeHttp && url.Scheme != Uri.UriSchemeHttps))
+						|| (url.Scheme != Uri.UriSchemeHttp && url.Scheme != Uri.UriSchemeHttps)
+						|| string.IsNullOrEmpty(url.Host))
 					{
 						error = "url 없음 또는 http(s)가 아님";
 						return false;
