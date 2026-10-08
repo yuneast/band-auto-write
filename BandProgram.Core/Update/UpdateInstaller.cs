@@ -31,7 +31,14 @@ namespace BandProgram
 				bool done = true;
 				foreach (string path in targets)
 				{
-					done &= TryDelete(() => { if (File.Exists(path)) File.Delete(path); });
+					done &= TryDelete(() =>
+					{
+						if (File.Exists(path))
+						{
+							File.SetAttributes(path, FileAttributes.Normal);
+							File.Delete(path);
+						}
+					});
 				}
 				done &= TryDelete(() => { if (Directory.Exists(updateDir)) Directory.Delete(updateDir, true); });
 				if (done)
@@ -53,6 +60,7 @@ namespace BandProgram
 					string old = Path.Combine(appDir, OldName(file));
 					if (File.Exists(old))
 					{
+						File.SetAttributes(old, FileAttributes.Normal);
 						File.Delete(old);
 					}
 					if (File.Exists(target))
@@ -63,9 +71,12 @@ namespace BandProgram
 				}
 				return journal;
 			}
-			catch
+			catch (Exception ex)
 			{
-				journal.Undo();
+				if (!journal.Undo())
+				{
+					throw new IOException(string.Concat("교체 실패 후 되돌리기 일부 실패: ", ex.Message), ex);
+				}
 				throw;
 			}
 		}

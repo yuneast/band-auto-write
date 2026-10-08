@@ -112,4 +112,27 @@ public class UpdateInstallerTests : IDisposable
 
         Assert.True(File.Exists(Path.Combine(app, "BandProgram.old.exe")));
     }
+
+    [Fact]
+    public void Swap_replaces_stale_old_file_from_previous_update()
+    {
+        File.WriteAllText(Path.Combine(app, "BandProgram.old.exe"), "stale");
+
+        UpdateInstaller.Swap(app, fresh);
+
+        Assert.Equal("old-exe", Read("BandProgram.old.exe"));
+        Assert.Equal("new-exe", Read("BandProgram.exe"));
+    }
+
+    [Fact]
+    public void Cleanup_removes_read_only_old_file()
+    {
+        UpdateInstaller.Swap(app, fresh);
+        string oldExe = Path.Combine(app, "BandProgram.old.exe");
+        File.SetAttributes(oldExe, FileAttributes.ReadOnly);
+
+        UpdateInstaller.Cleanup(app, attempts: 2, delayMs: 1);
+
+        Assert.False(File.Exists(oldExe));
+    }
 }
