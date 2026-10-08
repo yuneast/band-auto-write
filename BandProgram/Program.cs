@@ -15,7 +15,7 @@ namespace BandProgram
         /// 해당 응용 프로그램의 주 진입점입니다.
         /// </summary>
         [STAThread]
-        static void Main()
+        static void Main(string[] args)
         {
             // .NET Framework와 같은 기본 글꼴·DPI 동작 (.NET Core 3.0부터 기본값이 Segoe UI 9pt로 바뀜).
             // .NET Framework의 기본 글꼴은 시스템 기본 글꼴(한국어 Windows는 굴림 9pt)이었고,
@@ -27,6 +27,11 @@ namespace BandProgram
             Application.SetCompatibleTextRenderingDefault(false);
             // 상대 경로 파일(bandList.txt, AutoDoc/...)이 마이그레이션이 변환한 폴더와 같은 곳을 가리키게 한다.
             Directory.SetCurrentDirectory(AppPaths.DataDir);
+            // 새 버전이 있으면 업데이트하고 새 exe를 실행했으므로 여기서 끝낸다(강제 업데이트).
+            if (AutoUpdate.Run(args))
+            {
+                return;
+            }
             Util.Clipboard = new WinFormsClipboard();
             SelectorTrace.Sink = line =>
             {
