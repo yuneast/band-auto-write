@@ -21,3 +21,7 @@ devdata/
 
 # Logs written next to the app
 selector-miss.log
+
+# License server data (user ids and plaintext passwords)
+band/data/*
+!band/data/.gitkeep

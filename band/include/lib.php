@@ -1,8 +1,4 @@
 <?php
-@extract($_GET);
-@extract($_POST);
-@extract($_SERVER); 
-
 function AlertBox($StrMsg,$StrAction,$StrRefresh='') {
 	print "<script language='javascript'>\n";
 	print "alert ('$StrMsg');\n";

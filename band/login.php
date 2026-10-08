@@ -5,15 +5,14 @@ include "include/lib.php";
 if ($_REQUEST["action"] == 'login') {
 	$Id = StrToLower($_POST['id']);
 	$Pass = StrToLower($_POST['pass']);
-	$sql = "SELECT pass,date FROM user WHERE id='$Id'";
-	$result = $connect->query($sql);
-	if ($result->num_rows < '1') {
+	$stmt = $connect->prepare("SELECT pass,date FROM user WHERE id=?");
+	$stmt->execute([$Id]);
+	$row = $stmt->fetch(PDO::FETCH_ASSOC);
+	if (!$row) {
 		AlertBox ('실패','','./login.php');
 		Exit;
 	} else {
-		$row = $result->fetch_array();
-
-		$timenow = date("Y-m-d"); 
+		$timenow = date("Y-m-d");
 		$timetarget = $row['date'];
 		$str_now = strtotime($timenow);
 		$str_target = strtotime($timetarget);
@@ -26,8 +25,8 @@ if ($_REQUEST["action"] == 'login') {
 			$session = md5(rand());
 			SetCookie('AuthId',$Id,-1,'/');
 			SetCookie('AuthSession',$session,-1,'/');
-			$sql = "UPDATE user SET band_session='$session' WHERE id='$Id'";
-			$connect->query($sql);
+			$stmt = $connect->prepare("UPDATE user SET band_session=? WHERE id=?");
+			$stmt->execute([$session, $Id]);
 			AlertBox ('성공','','./session.php?type=band');
 		} else {
 			AlertBox ('실패','','./login.php');
@@ -56,5 +55,5 @@ if ($_REQUEST["action"] == 'login') {
 </form>
 <?php
 }
-$connect->close();
+$connect = null;
 ?>
