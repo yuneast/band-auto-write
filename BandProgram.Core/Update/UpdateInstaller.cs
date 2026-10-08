@@ -40,7 +40,17 @@ namespace BandProgram
 						}
 					});
 				}
-				done &= TryDelete(() => { if (Directory.Exists(updateDir)) Directory.Delete(updateDir, true); });
+				done &= TryDelete(() =>
+				{
+					if (Directory.Exists(updateDir))
+					{
+						foreach (string file in Directory.EnumerateFiles(updateDir, "*", SearchOption.AllDirectories))
+						{
+							File.SetAttributes(file, FileAttributes.Normal);
+						}
+						Directory.Delete(updateDir, true);
+					}
+				});
 				if (done)
 				{
 					return;

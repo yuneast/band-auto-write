@@ -135,4 +135,16 @@ public class UpdateInstallerTests : IDisposable
 
         Assert.False(File.Exists(oldExe));
     }
+
+    [Fact]
+    public void Cleanup_removes_update_folder_with_read_only_file()
+    {
+        string x = Path.Combine(app, ".update", "new", "x.exe");
+        File.WriteAllText(x, "x");
+        File.SetAttributes(x, FileAttributes.ReadOnly);
+
+        UpdateInstaller.Cleanup(app, attempts: 2, delayMs: 1);
+
+        Assert.False(Directory.Exists(Path.Combine(app, ".update")));
+    }
 }
