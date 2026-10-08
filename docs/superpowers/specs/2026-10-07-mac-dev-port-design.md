@@ -85,7 +85,7 @@ BandProgram.sln
 | `OpenFileDialog` | `FunctionList.showFileOpenDialog` | UI 프로젝트의 `ImageFileDialog.Show()`로 옮기고 `NewPostForm`, `PostingAddForm` 호출부를 바꾼다. |
 | `MenuItem`/`ContextMenu` (.NET 10에서 컴파일은 되지만 실행 시 `PlatformNotSupportedException`, 경고 WFDEV006) | `LoginSecond`, `MainForm`, `BandLayout`, `NewPostForm`, `PostingAddForm` | `ContextMenuStrip`/`ToolStripMenuItem`으로 바꾼다. 클릭 핸들러의 `((MenuItem)obj).Index`는 `Owner.Items.IndexOf(item)`로 바꿔 인덱스 의미를 유지한다. |
 | `Process.Start(경로)` | `NewPostForm`, `PostingAddForm` | .NET 10은 `UseShellExecute` 기본값이 `false`라 폴더·이미지 열기가 실패한다. `new ProcessStartInfo(path) { UseShellExecute = true }`로 바꾼다. |
-| WinForms 기본 글꼴·DPI | `Program.Main` | .NET Core 3.0부터 기본 글꼴이 `Microsoft Sans Serif 8.25pt`에서 `Segoe UI 9pt`로 바뀌어 레이아웃이 어긋난다. `Application.SetDefaultFont(new Font("Microsoft Sans Serif", 8.25f))`와 `Application.SetHighDpiMode(HighDpiMode.DpiUnaware)`로 기존과 맞춘다. |
+| WinForms 기본 글꼴·DPI | `Program.Main` | .NET Core 3.0부터 기본 글꼴이 Segoe UI 9pt로 바뀌어 레이아웃이 어긋난다. .NET Framework처럼 시스템 기본 글꼴(`SystemFonts.DefaultFont`, 한국어 Windows는 굴림 9pt — 폼의 `AutoScaleDimensions 7x12`와 같음)을 `Application.SetDefaultFont`로 지정하고, `Application.SetHighDpiMode(HighDpiMode.DpiUnaware)`로 DPI 동작을 맞춘다. |
 | `Properties/AssemblyInfo.cs`, `App.config`의 `<startup>` | | SDK가 어셈블리 정보를 생성하므로 삭제하고 제목·버전은 csproj로 옮긴다. `<startup>`은 .NET 10에서 의미가 없어 제거한다. |
 
 ## 4-1. 텍스트 파일 UTF-8 전환
