@@ -37,11 +37,12 @@ namespace BandProgram
 			{
 				Task.Run(() => updater.Install(manifest, this.ReportProgress)).ContinueWith(task =>
 				{
-					this.BeginInvoke(new Action(() =>
+					this.SafeInvoke(() =>
 					{
 						this.Result = task.IsFaulted ? null : task.Result;
+						this.done = true;
 						this.Close();
-					}));
+					});
 				});
 			};
 		}
