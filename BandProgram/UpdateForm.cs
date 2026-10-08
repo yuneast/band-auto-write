@@ -11,6 +11,7 @@ namespace BandProgram
 		private readonly Label label = new Label();
 		private readonly ProgressBar bar = new ProgressBar();
 		private int lastPercent = -1;
+		private bool done;
 
 		public UpdateForm(Updater updater, UpdateManifest manifest)
 		{
@@ -23,6 +24,13 @@ namespace BandProgram
 			this.label.Text = string.Concat("새 버전으로 업데이트 중... (", manifest.Version, ")");
 			this.bar.SetBounds(12, 46, 336, 22);
 			this.bar.Style = ProgressBarStyle.Marquee;
+			this.FormClosing += (sender, e) =>
+			{
+				if (!this.done && e.CloseReason != CloseReason.WindowsShutDown)
+				{
+					e.Cancel = true;
+				}
+			};
 			this.Controls.Add(this.label);
 			this.Controls.Add(this.bar);
 			this.Shown += (sender, e) =>
@@ -52,11 +60,28 @@ namespace BandProgram
 				return;
 			}
 			this.lastPercent = percent;
-			this.BeginInvoke(new Action(() =>
+			this.SafeInvoke(() =>
 			{
 				this.bar.Style = ProgressBarStyle.Continuous;
 				this.bar.Value = Math.Min(100, Math.Max(0, percent));
-			}));
+			});
+		}
+
+		private void SafeInvoke(Action action)
+		{
+			try
+			{
+				if (this.IsHandleCreated && !this.IsDisposed)
+				{
+					this.BeginInvoke(action);
+				}
+			}
+			catch (ObjectDisposedException)
+			{
+			}
+			catch (InvalidOperationException)
+			{
+			}
 		}
 	}
 }
