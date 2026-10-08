@@ -73,90 +73,138 @@ namespace BandProgram
 
 		public TimeSpan DownloadTimeout { get; set; } = TimeSpan.FromMinutes(5);
 
+		public long MaxManifestBytes { get; set; } = 64 * 1024;
+
+		public long MaxZipBytes { get; set; } = 200L * 1024 * 1024;
+
 		public UpdateResult Check()
 		{
-			byte[] manifestBytes;
-			byte[] signature;
 			try
 			{
-				manifestBytes = GetBytes(manifestUrl);
-				signature = GetBytes(new Uri(string.Concat(manifestUrl.ToString(), ".sig")));
+				byte[] manifestBytes;
+				byte[] signature;
+				try
+				{
+					manifestBytes = GetBytes(manifestUrl);
+					signature = GetBytes(new Uri(string.Concat(manifestUrl.ToString(), ".sig")));
+				}
+				catch (Exception ex)
+				{
+					return UpdateResult.Failed(string.Concat("확인 실패: ", ex.Message));
+				}
+				if (!ManifestVerifier.Verify(manifestBytes, signature, publicKeyBase64))
+				{
+					return UpdateResult.Failed("서명 검증 실패");
+				}
+				UpdateManifest manifest;
+				string error;
+				if (!UpdateManifest.TryParse(manifestBytes, out manifest, out error))
+				{
+					return UpdateResult.Failed(string.Concat("version.json 오류: ", error));
+				}
+				if (manifest.Version <= currentVersion)
+				{
+					return UpdateResult.NoUpdate(string.Concat("최신 버전 사용 중 (", currentVersion, ")"));
+				}
+				return UpdateResult.Available(manifest);
 			}
 			catch (Exception ex)
 			{
 				return UpdateResult.Failed(string.Concat("확인 실패: ", ex.Message));
 			}
-			if (!ManifestVerifier.Verify(manifestBytes, signature, publicKeyBase64))
-			{
-				return UpdateResult.Failed("서명 검증 실패");
-			}
-			UpdateManifest manifest;
-			string error;
-			if (!UpdateManifest.TryParse(manifestBytes, out manifest, out error))
-			{
-				return UpdateResult.Failed(string.Concat("version.json 오류: ", error));
-			}
-			if (manifest.Version <= currentVersion)
-			{
-				return UpdateResult.NoUpdate(string.Concat("최신 버전 사용 중 (", currentVersion, ")"));
-			}
-			return UpdateResult.Available(manifest);
 		}
 
 		public UpdateResult Install(UpdateManifest manifest, Action<long, long?> progress)
 		{
-			string updateDir = Path.Combine(appDir, UpdateInstaller.UpdateDirName);
-			string zipPath = Path.Combine(updateDir, "BandProgram.zip");
-			string newDir = Path.Combine(updateDir, "new");
+			string stage = "다운로드 실패";
+			string zipPath = null;
 			try
 			{
+				string updateDir = Path.Combine(appDir, UpdateInstaller.UpdateDirName);
+				zipPath = Path.Combine(updateDir, "BandProgram.zip");
+				string newDir = Path.Combine(updateDir, "new");
 				if (Directory.Exists(updateDir))
 				{
 					Directory.Delete(updateDir, true);
 				}
 				Directory.CreateDirectory(newDir);
 				Download(manifest.Url, zipPath, progress);
-			}
-			catch (UnauthorizedAccessException ex)
-			{
-				return UpdateResult.Failed(string.Concat("다운로드 실패(권한): ", ex.Message), true);
-			}
-			catch (Exception ex)
-			{
-				return UpdateResult.Failed(string.Concat("다운로드 실패: ", ex.Message));
-			}
-			string actual = UpdatePackage.Sha256Hex(zipPath);
-			if (!string.Equals(actual, manifest.Sha256, StringComparison.Ordinal))
-			{
-				return UpdateResult.Failed(string.Concat("해시 불일치 (", actual, ")"));
-			}
-			string error;
-			if (!UpdatePackage.TryExtract(zipPath, newDir, out error))
-			{
-				return UpdateResult.Failed(error);
-			}
-			try
-			{
+
+				stage = "해시 확인 실패";
+				string actual = UpdatePackage.Sha256Hex(zipPath);
+				if (!string.Equals(actual, manifest.Sha256, StringComparison.Ordinal))
+				{
+					return UpdateResult.Failed(string.Concat("해시 불일치 (", actual, ")"));
+				}
+
+				stage = "압축 해제 실패";
+				string error;
+				if (!UpdatePackage.TryExtract(zipPath, newDir, out error))
+				{
+					return UpdateResult.Failed(error);
+				}
+
+				stage = "교체 실패";
 				SwapJournal journal = UpdateInstaller.Swap(appDir, newDir);
 				return UpdateResult.Ready(manifest, journal, Path.Combine(appDir, UpdatePackage.ExeName));
 			}
 			catch (UnauthorizedAccessException ex)
 			{
-				return UpdateResult.Failed(string.Concat("교체 실패(권한): ", ex.Message), true);
+				DeletePartial(stage, zipPath);
+				return UpdateResult.Failed(string.Concat(stage, "(권한): ", ex.Message), true);
 			}
 			catch (Exception ex)
 			{
-				return UpdateResult.Failed(string.Concat("교체 실패: ", ex.Message));
+				DeletePartial(stage, zipPath);
+				return UpdateResult.Failed(string.Concat(stage, ": ", ex.Message));
+			}
+		}
+
+		// 다운로드 단계에서 실패하면 받다 만 zip을 지운다.
+		private static void DeletePartial(string stage, string zipPath)
+		{
+			if (zipPath == null || stage != "다운로드 실패")
+			{
+				return;
+			}
+			try
+			{
+				if (File.Exists(zipPath))
+				{
+					File.Delete(zipPath);
+				}
+			}
+			catch (Exception)
+			{
 			}
 		}
 
 		private byte[] GetBytes(Uri url)
 		{
 			using (var cts = new CancellationTokenSource(ManifestTimeout))
-			using (HttpResponseMessage response = http.GetAsync(url, cts.Token).GetAwaiter().GetResult())
+			using (HttpResponseMessage response = http.GetAsync(url, HttpCompletionOption.ResponseHeadersRead, cts.Token).GetAwaiter().GetResult())
 			{
 				response.EnsureSuccessStatusCode();
-				return response.Content.ReadAsByteArrayAsync(cts.Token).GetAwaiter().GetResult();
+				long? length = response.Content.Headers.ContentLength;
+				if (length.HasValue && length.Value > MaxManifestBytes)
+				{
+					throw new IOException("응답이 너무 큽니다");
+				}
+				using (Stream source = response.Content.ReadAsStreamAsync(cts.Token).GetAwaiter().GetResult())
+				using (var buffer = new MemoryStream())
+				{
+					byte[] chunk = new byte[8192];
+					int read;
+					while ((read = source.ReadAsync(chunk, 0, chunk.Length, cts.Token).GetAwaiter().GetResult()) > 0)
+					{
+						buffer.Write(chunk, 0, read);
+						if (buffer.Length > MaxManifestBytes)
+						{
+							throw new IOException("응답이 너무 큽니다");
+						}
+					}
+					return buffer.ToArray();
+				}
 			}
 		}
 
@@ -167,6 +215,10 @@ namespace BandProgram
 			{
 				response.EnsureSuccessStatusCode();
 				long? total = response.Content.Headers.ContentLength;
+				if (total.HasValue && total.Value > MaxZipBytes)
+				{
+					throw new IOException("파일이 너무 큽니다");
+				}
 				using (Stream source = response.Content.ReadAsStreamAsync(cts.Token).GetAwaiter().GetResult())
 				using (FileStream target = File.Create(path))
 				{
@@ -175,8 +227,12 @@ namespace BandProgram
 					int read;
 					while ((read = source.ReadAsync(buffer, 0, buffer.Length, cts.Token).GetAwaiter().GetResult()) > 0)
 					{
-						target.Write(buffer, 0, read);
 						received += read;
+						if (received > MaxZipBytes)
+						{
+							throw new IOException("파일이 너무 큽니다");
+						}
+						target.Write(buffer, 0, read);
 						if (progress != null)
 						{
 							progress(received, total);

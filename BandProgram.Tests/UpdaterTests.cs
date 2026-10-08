@@ -214,4 +214,30 @@ public class UpdaterTests : IDisposable
             File.SetUnixFileMode(app, UnixFileMode.UserRead | UnixFileMode.UserWrite | UnixFileMode.UserExecute);
         }
     }
+
+    [Fact]
+    public void Check_fails_when_manifest_is_too_large()
+    {
+        Publish("2026.10.8.1015", Zip());
+        Updater updater = NewUpdater();
+        updater.MaxManifestBytes = 16;
+        UpdateResult result = updater.Check();
+        Assert.Equal(UpdateOutcome.Failed, result.Outcome);
+    }
+
+    [Fact]
+    public void Install_fails_when_zip_exceeds_limit()
+    {
+        Publish("2026.10.8.1015", Zip());
+        Updater updater = NewUpdater();
+        UpdateResult check = updater.Check();
+        Assert.Equal(UpdateOutcome.UpdateAvailable, check.Outcome);
+        updater.MaxZipBytes = 10;
+
+        UpdateResult install = updater.Install(check.Manifest, null);
+
+        Assert.Equal(UpdateOutcome.Failed, install.Outcome);
+        Assert.Equal("old-exe", Read("BandProgram.exe"));
+        Assert.False(File.Exists(Path.Combine(app, ".update", "BandProgram.zip")));
+    }
 }
