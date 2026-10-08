@@ -1,6 +1,7 @@
 # Windows 스모크 테스트
 
-맥에서 `scripts/publish-windows.sh`로 만든 `publish/win-x64`의 두 파일(`BandProgram.exe`, `selenium-manager.exe`)을
+고객 배포는 `scripts/publish-windows.sh`가 만든 `publish/BandProgram.zip`(서버 업로드 후 `http://newsoft.kr/download/BandProgram.zip`)을 쓴다.
+테스트는 맥에서 `scripts/publish-windows.sh --no-upload`로 만든 `publish/win-x64`의 두 파일(`BandProgram.exe`, `selenium-manager.exe`)을
 Windows PC의 한 폴더에 복사해서 확인한다. `BandProgram.exe`는 .NET 런타임을 포함한 단일 파일이라 따로 설치할 것이 없다.
 `selenium-manager.exe`는 Chrome 드라이버를 받는 데 쓰이므로 반드시 exe 옆에 둔다.
 

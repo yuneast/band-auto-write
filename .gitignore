@@ -25,3 +25,6 @@ selector-miss.log
 # License server data (user ids and plaintext passwords)
 band/data/*
 !band/data/.gitkeep
+
+# Local copies of the published Windows app
+/*.exe
