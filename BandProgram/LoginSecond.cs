@@ -120,7 +120,7 @@ namespace BandProgram
         {
             try
             {
-                int index = ((MenuItem)obj).Index;
+                int index = LegacyMenu.IndexOf(obj);
                 if (index == 0)
                 {
                     this.removeItem();
@@ -185,8 +185,7 @@ namespace BandProgram
             if (e.Button == System.Windows.Forms.MouseButtons.Right)
             {
                 EventHandler eventHandler = new EventHandler(this.MenuClick);
-                MenuItem[] menuItem = new MenuItem[] { new MenuItem("선택된 항목 삭제하기", eventHandler), new MenuItem("전체 삭제하기", eventHandler) };
-                this.listView1.ContextMenu = new System.Windows.Forms.ContextMenu(menuItem);
+                this.listView1.ContextMenuStrip = LegacyMenu.Create(eventHandler, "선택된 항목 삭제하기", "전체 삭제하기");
             }
         }
 

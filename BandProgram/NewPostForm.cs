@@ -124,7 +124,7 @@ namespace BandProgram
             {
                 try
                 {
-                    ImageFile imageFile = this.fl.showFileOpenDialog();
+                    ImageFile imageFile = ImageFileDialog.Show();
                     if (imageFile != null)
                     {
                         this.commentImageFileList.Add(imageFile);
@@ -167,7 +167,7 @@ namespace BandProgram
             {
                 try
                 {
-                    ImageFile imageFile = this.fl.showFileOpenDialog();
+                    ImageFile imageFile = ImageFileDialog.Show();
                     if (imageFile != null)
                     {
                         this.imageFileList.Add(imageFile);
@@ -183,7 +183,7 @@ namespace BandProgram
         {
             try
             {
-                int index = ((MenuItem)obj).Index;
+                int index = LegacyMenu.IndexOf(obj);
                 if (index == 0)
                 {
                     this.imageFileList.Clear();
@@ -206,20 +206,20 @@ namespace BandProgram
         {
             if (!this.radioPostImage.Checked)
             {
-                Process.Start(Path.GetDirectoryName(this.imageFileList[this.postImageList.FocusedItem.Index].getPath()));
+                ShellOpen.Open(Path.GetDirectoryName(this.imageFileList[this.postImageList.FocusedItem.Index].getPath()));
             }
             else
             {
                 string str = string.Concat(this.imageFileList[this.postImageList.FocusedItem.Index].getPath(), this.imageFileList[this.postImageList.FocusedItem.Index].getFileName());
                 try
                 {
-                    Process.Start(str);
+                    ShellOpen.Open(str);
                 }
                 catch
                 {
                     try
                     {
-                        Process.Start(string.Concat(string.Concat(Application.StartupPath.Replace('\\', '/'), "/"), str));
+                        ShellOpen.Open(string.Concat(string.Concat(Application.StartupPath.Replace('\\', '/'), "/"), str));
                     }
                     catch
                     {
@@ -233,8 +233,7 @@ namespace BandProgram
             if (e.Button == System.Windows.Forms.MouseButtons.Right)
             {
                 EventHandler eventHandler = new EventHandler(this.MenuClick);
-                MenuItem[] menuItem = new MenuItem[] { new MenuItem("전체 사진 삭제", eventHandler), new MenuItem("선택한 사진 삭제", eventHandler) };
-                this.postImageList.ContextMenu = new System.Windows.Forms.ContextMenu(menuItem);
+                this.postImageList.ContextMenuStrip = LegacyMenu.Create(eventHandler, "전체 사진 삭제", "선택한 사진 삭제");
             }
         }
 
@@ -292,8 +291,7 @@ namespace BandProgram
                 if (e.Button == System.Windows.Forms.MouseButtons.Right)
                 {
                     EventHandler eventHandler = new EventHandler(this.MenuClick_1);
-                    MenuItem[] menuItem = new MenuItem[] { new MenuItem("전체 사진 삭제", eventHandler), new MenuItem("선택한 사진 삭제", eventHandler) };
-                    this.commentImageList.ContextMenu = new System.Windows.Forms.ContextMenu(menuItem);
+                    this.commentImageList.ContextMenuStrip = LegacyMenu.Create(eventHandler, "전체 사진 삭제", "선택한 사진 삭제");
                 }
             
         }
@@ -301,7 +299,7 @@ namespace BandProgram
         {
             try
             {
-                int index = ((MenuItem)obj).Index;
+                int index = LegacyMenu.IndexOf(obj);
                 if (index == 0)
                 {
                     this.commentImageFileList.Clear();

@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <RootNamespace>BandProgram</RootNamespace>
+    <AssemblyName>BandProgram.Core</AssemblyName>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <!-- .NET 10에서 실행 시 PlatformNotSupportedException을 던지는 API -->
+    <WarningsAsErrors>WFDEV006;SYSLIB0006;CS0618</WarningsAsErrors>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="BandProgram" />
+    <InternalsVisibleTo Include="BandProgram.Dev" />
+    <InternalsVisibleTo Include="BandProgram.Tests" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="Selenium.WebDriver" Version="4.50.0" />
+    <PackageReference Include="Selenium.Support" Version="4.50.0" />
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="10.0.0" />
+  </ItemGroup>
+
+</Project>

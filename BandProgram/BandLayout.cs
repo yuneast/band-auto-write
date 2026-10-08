@@ -11,6 +11,12 @@ namespace BandProgram
 	{
 		private Thread thPosting;
 
+		private readonly WorkControl work = new WorkControl();
+
+		private bool isPaused;
+
+		private bool isReset;
+
 		private FunctionList fl = new FunctionList();
 
 		private string path = "";
@@ -70,7 +76,7 @@ namespace BandProgram
 			this.isOperating = isOperating;
 			this.path = path;
 			this.sep = sep;
-			this.entirePath = string.Concat(new string[] { Application.StartupPath.Replace('\\', '/'), "/", path, "/", sep });
+			this.entirePath = string.Concat(new string[] { AppPaths.DataDirWithSlash, path, "/", sep });
 			this.prepareComboBox();
 			this.loadPostingList();
 		}
@@ -122,7 +128,7 @@ namespace BandProgram
 		{
 			this.btnStart.Enabled = !isRunning;
 			this.btnPause.Enabled = false;
-			if (this.thPosting != null && this.thPosting.ThreadState != ThreadState.Aborted)
+			if (this.thPosting != null && !this.isReset)
 			{
 				this.btnInit.Enabled = true;
 				return;
@@ -137,26 +143,21 @@ namespace BandProgram
 
 		private void btnInit_Click(object sender, EventArgs e)
 		{
-			try
-			{
-				this.thPosting.Abort();
-			}
-			catch
-			{
-			}
+			this.work.Reset();
+			this.isReset = true;
+			this.isPaused = false;
 			this.toggleState(true, true);
 		}
 
 		private void btnPause_Click(object sender, EventArgs e)
 		{
-			try
+			if (this.thPosting == null)
 			{
-				this.thPosting.Suspend();
-				this.toggleState(true, false);
+				return;
 			}
-			catch
-			{
-			}
+			this.work.Pause();
+			this.isPaused = true;
+			this.toggleState(true, false);
 		}
 
 		private void btnRemove_Click(object sender, EventArgs e)
@@ -167,8 +168,9 @@ namespace BandProgram
 		private void btnStart_Click(object sender, EventArgs e)
 		{
             //Julian 포스팅작업시작
-			if (this.thPosting == null || this.thPosting.ThreadState != ThreadState.Suspended)
+			if (this.thPosting == null || !this.isPaused || !this.thPosting.IsAlive)
 			{
+				this.isPaused = false;
 				if (this.type == 0)
 				{
 					this.printLog(string.Concat(this.id, " -> 포스팅 작업 시작"));
@@ -181,8 +183,8 @@ namespace BandProgram
 				{
 					this.printLog(string.Concat(this.id, " -> 대화 작업 시작"));
 				}
-				this.thPosting = new Thread(new ThreadStart(this.startWork));
-				this.thPosting.Start();
+				this.isReset = false;
+				this.thPosting = this.work.Start(this.startWork);
 			}
 			else
 			{
@@ -199,7 +201,8 @@ namespace BandProgram
 					this.printLog(string.Concat(this.id, " -> 대화 작업 재시작"));
 				}
 				this.resume();
-				this.thPosting.Resume();
+				this.isPaused = false;
+				this.work.Resume();
 			}
 			this.toggleState(false, false);
 		}
@@ -209,8 +212,7 @@ namespace BandProgram
 			if (e.Button == MouseButtons.Right)
 			{
 				EventHandler eventHandler = new EventHandler(this.MenuClick);
-				MenuItem[] menuItem = new MenuItem[] { new MenuItem("항목 추가하기", eventHandler), new MenuItem("선택된 항목 삭제하기", eventHandler) };
-				this.postingListView.ContextMenu = new ContextMenu(menuItem);
+				this.postingListView.ContextMenuStrip = LegacyMenu.Create(eventHandler, "항목 추가하기", "선택된 항목 삭제하기");
 			}
 		}
 
@@ -262,7 +264,7 @@ namespace BandProgram
 		{
 			try
 			{
-				int index = ((MenuItem)obj).Index;
+				int index = LegacyMenu.IndexOf(obj);
 				if (index == 0)
 				{
 					this.addPosting();
@@ -502,6 +504,7 @@ namespace BandProgram
 			{
 				this.fl.startChatting(new FunctionList.Del_PrintLog(this.printLogMsg), new FunctionList.Del_PrintLogLeft(this.printLogLeftMsg));
 			}
+			WorkControl.Checkpoint();
 			this.refresh();
 			this.toggleState(true, true);
 		}

@@ -468,7 +468,7 @@ namespace BandProgram
         {
             try
             {
-                switch (((MenuItem)obj).Index)
+                switch (LegacyMenu.IndexOf(obj))
                 {
                     case 0:
                         {
@@ -538,8 +538,7 @@ namespace BandProgram
             if (e.Button == System.Windows.Forms.MouseButtons.Right)
             {
                 EventHandler eventHandler = new EventHandler(this.MenuClick);
-                MenuItem[] menuItem = new MenuItem[] { new MenuItem("선택된 항목 삭제하기", eventHandler), new MenuItem("-", eventHandler), new MenuItem("현재 리스트를 파일로 저장하기", eventHandler), new MenuItem("파일로 저장된 리스트 불러오기", eventHandler), new MenuItem("-", eventHandler), new MenuItem("선택된 항목 포스트 번호 일괄 수정하기", eventHandler), new MenuItem("서버에서 가입된 밴드 리스트 불러오기", eventHandler), new MenuItem("-", eventHandler), new MenuItem("모든 항목 선택하기", eventHandler), new MenuItem("모든 항목 선택 해제하기", eventHandler) };
-                this.listView1.ContextMenu = new System.Windows.Forms.ContextMenu(menuItem);
+                this.listView1.ContextMenuStrip = LegacyMenu.Create(eventHandler, "선택된 항목 삭제하기", "-", "현재 리스트를 파일로 저장하기", "파일로 저장된 리스트 불러오기", "-", "선택된 항목 포스트 번호 일괄 수정하기", "서버에서 가입된 밴드 리스트 불러오기", "-", "모든 항목 선택하기", "모든 항목 선택 해제하기");
             }
         }
         private void signupBand()
@@ -548,6 +547,7 @@ namespace BandProgram
             {
                 this.signupBandMain();
             }
+            WorkControl.Checkpoint();
             this.toggleToBandSign(true, true);
         }
         private void signupBandMain()
@@ -622,11 +622,11 @@ namespace BandProgram
         }
         private void button15_Click(object sender, EventArgs e)
         {
-            if (this.thSignup == null || this.thSignup.ThreadState != System.Threading.ThreadState.Suspended)
+            if (this.thSignup == null || !this.signupPaused || !this.thSignup.IsAlive)
             {
+                this.signupPaused = false;
                 this.printLog(string.Concat(this.userid, " -> 가입 작업 시작"));
-                this.thSignup = new Thread(new ThreadStart(this.signupBand));
-                this.thSignup.Start();
+                this.thSignup = this.signupWork.Start(this.signupBand);
             }
             else
             {
@@ -635,21 +635,21 @@ namespace BandProgram
                 {
                     return;
                 }
-                this.thSignup.Resume();
+                this.signupPaused = false;
+                this.signupWork.Resume();
             }
             this.toggleToBandSign(false, false);
         }
 
         private void button14_Click(object sender, EventArgs e)
         {
-            try
+            if (this.thSignup == null)
             {
-                this.thSignup.Suspend();
-                this.toggleToBandSign(true, false);
+                return;
             }
-            catch
-            {
-            }
+            this.signupWork.Pause();
+            this.signupPaused = true;
+            this.toggleToBandSign(true, false);
         }
         private void toggleToBandSign(bool enable, bool finished)
         {
@@ -668,15 +668,12 @@ namespace BandProgram
             this.isOperating(3, !enable, finished);
         }
         private Thread thSignup;
+        private readonly WorkControl signupWork = new WorkControl();
+        private bool signupPaused;
         private void button10_Click(object sender, EventArgs e)
         {
-            try
-            {
-                this.thSignup.Abort();
-            }
-            catch
-            {
-            }
+            this.signupWork.Reset();
+            this.signupPaused = false;
             this.toggleToBandSign(true, true);
         }
 

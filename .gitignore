@@ -1,0 +1,23 @@
+# Build outputs
+bin/
+obj/
+out/
+publish/
+
+# Visual Studio / Rider
+.vs/
+*.suo
+*.user
+.idea/
+
+# NuGet (legacy packages.config folder)
+packages/
+
+# macOS
+.DS_Store
+
+# Dev shell data (accounts, cookies, snapshots)
+devdata/
+
+# Logs written next to the app
+selector-miss.log
