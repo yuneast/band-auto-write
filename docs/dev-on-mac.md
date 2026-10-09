@@ -48,3 +48,16 @@ VS Code의 실행 및 디버그 → 중단점 패널에서 "All Exceptions"(또�
 - 붙여넣기는 `Cmd+V`로 한다. 헤드리스 Chrome에서는 붙여넣기가 되지 않는다.
 - `adb`는 PATH에서 찾는다(`brew install android-platform-tools`). IP 변경 기능은 현재 호출되지 않는다.
 - WinForms 화면은 맥에서 띄울 수 없다. 화면 변경은 Windows에서 확인한다(`docs/windows-smoke-test.md`).
+
+## 배포와 자동 업데이트
+
+- 처음 한 번: `scripts/create-update-key.sh`로 서명 키를 만든다(이미 있으면 멈춘다).
+  개인키 `~/.config/band-deploy/update-signing-key.pem`은 저장소에 넣지 말고 따로 백업한다.
+  잃어버리면 새 키를 만들고 공개키를 `BandProgram.Core/Update/UpdatePublicKey.cs`에 넣은 exe를 고객에게 직접 한 번 배포해야 한다.
+- 배포: `scripts/publish-windows.sh` — 버전(실행 시각) 지정, 빌드, zip, `version.json` 서명, 업로드, 서명 재검증까지 한다.
+  빌드만 하려면 `--no-upload`.
+- 권장 순서: ① `scripts/publish-windows.sh --no-upload` → ② `publish/BandProgram.zip`을 Windows PC로 복사해 스모크 테스트(`docs/windows-smoke-test.md`) →
+  ③ `scripts/publish-windows.sh --upload-only`로 시험한 바로 그 빌드를 올린다(해시·서명을 다시 확인한 뒤 업로드).
+- 개인키에는 암호가 없으므로, 백업은 암호화된 저장소에만 둔다.
+- 고객 프로그램은 시작할 때 `http://newsoft.kr/download/version.json`을 확인해 새 버전이면 묻지 않고 업데이트한다.
+- 문제 있는 배포는 옛 코드로 다시 배포해서 되돌린다(더 높은 버전 번호로 올라간다). `version.json`을 옛 버전으로 바꿔도 고객은 내려가지 않는다.
