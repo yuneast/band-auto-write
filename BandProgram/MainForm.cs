@@ -45,7 +45,7 @@ namespace BandProgram
                 }
                 try
                 {
-                    HttpWebRequest req2 = (HttpWebRequest)WebRequest.Create("http://newsoft.kr/session.php?type=band");
+                    HttpWebRequest req2 = (HttpWebRequest)WebRequest.Create("https://newsoft.kr/session.php?type=band");
                     req2.Method = "GET";
                     req2.ContentType = "application/x-www-form-urlencoded;charset=UTF-8";
                     req2.CookieContainer = session;

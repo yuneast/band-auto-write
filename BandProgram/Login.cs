@@ -38,7 +38,7 @@ namespace BandProgram
                 return;
             }
 
-            string url_str = "http://newsoft.kr/login.php?action=login";
+            string url_str = "https://newsoft.kr/login.php?action=login";
             if (Global.Instance.isLocalLogin)
             {
                 url_str = "http://127.0.0.1:3000/login";
