@@ -53,6 +53,7 @@ namespace BandProgram
             req.ContentType = "application/x-www-form-urlencoded;charset=UTF-8";
             req.ContentLength = br.Length;
             req.AllowAutoRedirect = true;
+            req.ServerCertificateValidationCallback = ServerTrust.Validate;
             req.GetRequestStream().Write(br, 0, br.Length);
             string read = "";
             using (var response = req.GetResponse())

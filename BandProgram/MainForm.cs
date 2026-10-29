@@ -50,6 +50,7 @@ namespace BandProgram
                     req2.ContentType = "application/x-www-form-urlencoded;charset=UTF-8";
                     req2.CookieContainer = session;
                     req2.AllowAutoRedirect = true;
+                    req2.ServerCertificateValidationCallback = ServerTrust.Validate;
                     string read2 = "";
                     using (var response = req2.GetResponse())
                     {
