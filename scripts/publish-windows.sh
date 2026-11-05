@@ -8,6 +8,7 @@
 #
 # 버전: 실행 시각 yyyy.M.d.HHmm. 서버의 현재 버전보다 높아야 올라간다.
 # 업로드: /www/band/download/ (http://newsoft.kr/download/), 보관본 /root/band-releases/
+#   서버의 BandProgram.zip은 현재 버전 zip을 가리키는 링크다. 예전 버전은 업로드 후 자동으로 정리한다.
 # 서명 키: ~/.config/band-deploy/update-signing-key.pem (scripts/create-update-key.sh로 한 번 만든다)
 # 환경 변수: BAND_DEPLOY_HOST, BAND_DEPLOY_PORT, BAND_DEPLOY_USER, BAND_SIGNING_KEY
 #
@@ -38,6 +39,8 @@ SIGNING_KEY="${BAND_SIGNING_KEY:-$HOME/.config/band-deploy/update-signing-key.pe
 WEB_DIR=/www/band/download
 RELEASE_DIR=/root/band-releases
 BASE_URL=http://newsoft.kr/download
+KEEP_WEB=2      # 다운로드 폴더: 현재 버전 + 직전 버전 (업데이트를 받던 고객이 끊기지 않게)
+KEEP_ARCHIVE=3  # 보관 폴더: 최근 3개
 
 SSH=(ssh -p "$DEPLOY_PORT" -o BatchMode=yes -o ConnectTimeout=10 "$DEPLOY_USER@$DEPLOY_HOST")
 
@@ -80,6 +83,17 @@ upload() {
   scp -q -P "$DEPLOY_PORT" -o BatchMode=yes -o ConnectTimeout=10 "$1" "$DEPLOY_USER@$DEPLOY_HOST:$WEB_DIR/.$2.uploading"
 }
 
+# $1 폴더의 BandProgram-<버전>.zip 중 최신 $2개만 남기고 지운다. 방금 올린 $VERSION은 항상 남긴다.
+prune_releases() {
+  local old
+  old=$("${SSH[@]}" "cd $1 && ls" | sed -n 's/^BandProgram-\([0-9][0-9.]*[0-9]\)\.zip$/\1/p' \
+    | sort -t. -k1,1nr -k2,2nr -k3,3nr -k4,4nr | tail -n "+$(($2 + 1))" | grep -vxF "$VERSION" || true)
+  if [ -n "$old" ]; then
+    "${SSH[@]}" "cd $1 && rm -f $(printf 'BandProgram-%s.zip ' $old)"
+    echo "  예전 버전 정리 ($1): $(echo $old)"
+  fi
+}
+
 # publish/의 결과물을 서버에 올리고 검증한다. VERSION, ZIP_NAME, SHA 필요.
 upload_release() {
   echo "업로드 중: $DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PORT"
@@ -102,7 +116,7 @@ upload_release() {
   fi
   chmod 644 .$ZIP_NAME.uploading .version.json.uploading .version.json.sig.uploading
   mv -f .$ZIP_NAME.uploading $ZIP_NAME
-  cp $ZIP_NAME .BandProgram.zip.uploading
+  ln -sfn $ZIP_NAME .BandProgram.zip.uploading
   mv -f .BandProgram.zip.uploading BandProgram.zip
   cp $ZIP_NAME $RELEASE_DIR/$ZIP_NAME
   mv -f .version.json.sig.uploading version.json.sig
@@ -125,6 +139,9 @@ upload_release() {
     exit 1
   fi
   rm -rf "$check_dir"
+
+  prune_releases "$WEB_DIR" "$KEEP_WEB"
+  prune_releases "$RELEASE_DIR" "$KEEP_ARCHIVE"
 
   echo "업로드 완료: $VERSION"
   echo "  다운로드:      $BASE_URL/BandProgram.zip"
